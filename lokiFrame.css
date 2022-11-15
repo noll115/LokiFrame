@@ -1,0 +1,37 @@
+.MMM-LokiFrame .fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+.MMM-LokiFrame .image {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.MMM-LokiFrame img {
+  position: absolute;
+  height: 100%;
+}
+.MMM-LokiFrame .background {
+  width: 100%;
+  height: 100%;
+  filter: blur(1.5rem) brightness(70%);
+}
+
+.MMM-LokiFrame .fadeOut {
+  animation-name: fadeOut;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

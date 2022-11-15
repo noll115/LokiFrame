@@ -12,3 +12,6 @@ client/web-build/
 
 client/# macOS
 client/.DS_Store
+
+photos/
+.DS_Store
