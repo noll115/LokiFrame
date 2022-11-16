@@ -4,10 +4,6 @@ let fs = require("fs");
 const multer = require("multer");
 const express = require("express");
 
-const upload = multer({
-  dest: "photos/",
-});
-
 const PAGE_SIZE = 20;
 
 module.exports = NodeHelper.create({
@@ -15,12 +11,26 @@ module.exports = NodeHelper.create({
   photoIndex: 0,
   interval: 10000,
   start: function () {
-    this.files = fs.readdirSync(`${this.path}/photos`);
+    const photoPath = `${this.path}/photos`;
+    this.files = fs.readdirSync(photoPath);
+    this.upload = multer({
+      storage: multer.diskStorage({
+        destination: photoPath,
+        filename: (req, file, cb) => {
+          const fileTypeIndex = file.originalname.lastIndexOf(".");
+          const fileName = file.originalname.substring(0, fileTypeIndex);
+          const fileType = file.originalname.substring(fileTypeIndex);
+          const finalName = `${fileName}-${Date.now()}${fileType}`;
+          cb(null, finalName);
+        },
+      }),
+    });
     this.expressApp
       .route("/photos")
-      .post(upload.array("photos"), (req, res) => {
-        Log.log(req.files);
-        files.concat(req.files);
+      .post(this.upload.array("photos"), (req, res) => {
+        this.files = this.files.concat(req.files.map((file) => file.filename));
+        Log.log(this.files);
+        res.json(this.files);
       })
       .delete(express.json(), (req, res) => {
         Log.log(req.body);
