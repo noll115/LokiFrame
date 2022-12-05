@@ -1,15 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { ImagePickerAsset } from "expo-image-picker";
-import { Platform } from "react-native";
 const URL = __DEV__ ? "http://localhost:8080" : "magicmirror.local";
 
-const useLokiFrameAPI = () => {
-  const [imagesFromFrame, setImagesFromFrame] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+interface ImageData {
+  uri: string;
+  toDelete: boolean;
+}
 
-  const uploadNewImages = useCallback(async (newImages: ImagePickerAsset[]) => {
+const createURILinks = (uriArray: string[]): ImageData[] => {
+  return uriArray.map((uri) => ({
+    uri: `${URL}/photos/${uri}`,
+    toDelete: false,
+  }));
+};
+
+const useLokiFrameAPI = () => {
+  const [images, setImages] = useState<ImageData[]>([]);
+
+  const uploadNewImages = async (newImages: ImagePickerAsset[]) => {
     const data = new FormData();
-    console.log(newImages);
     for (const image of newImages) {
       if (!image.fileName) {
         image.fileName = new Date().toString();
@@ -24,24 +33,36 @@ const useLokiFrameAPI = () => {
       method: "POST",
       body: data,
     });
-    const newPhotos: string[] = await res.json();
+    let newPhotos = createURILinks(await res.json());
     console.log(newPhotos);
-    setImagesFromFrame(
-      newPhotos.map((photoName) => `${URL}/photos/${photoName}`)
-    );
-  }, []);
+    setImages(newPhotos);
+  };
 
   useEffect(() => {
     const getPhotos = async () => {
       let res = await fetch(`${URL}/photos`);
-      let data: string[] = await res.json();
-      setImagesFromFrame(data.map((photoName) => `${URL}/photos/${photoName}`));
-      setIsLoading(true);
+      let newphotos = createURILinks(await res.json());
+      setImages(newphotos);
     };
     getPhotos();
   }, []);
 
-  return { imagesFromFrame, isLoading, uploadNewImages };
+  const toggleImageDelete = (index: number) => {
+    return () =>
+      setImages((prevImages) => {
+        let prevVal = prevImages[index].toDelete;
+        prevImages[index].toDelete = !prevVal;
+        return [...prevImages];
+      });
+  };
+
+  const resetImages = () => {
+    setImages((prevImages) =>
+      prevImages.map(({ uri }) => ({ uri, toDelete: false }))
+    );
+  };
+
+  return { images, uploadNewImages, toggleImageDelete, resetImages };
 };
 
-export { useLokiFrameAPI };
+export { useLokiFrameAPI, ImageData };
