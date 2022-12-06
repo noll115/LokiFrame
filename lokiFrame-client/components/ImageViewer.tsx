@@ -2,20 +2,19 @@ import { BlurView } from "expo-blur";
 import { FC, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
-  FadeIn,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 import {
+  ActivityIndicator,
   Image,
+  Modal,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
 import { ImageData } from "../utils/frameAPI";
-
-const AnimatedBlur = Animated.createAnimatedComponent(BlurView);
 
 const ImageViewer: FC<{
   selectedImage: ImageData | null;
@@ -43,27 +42,45 @@ const ImageViewer: FC<{
   }
 
   return (
-    <AnimatedBlur entering={FadeIn} style={styles.viewImageContainer}>
-      <SafeAreaView style={styles.viewImageInnerContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.headerIcon}
-            onPress={() => {
-              setLoaded(false);
-              removeViewedImage();
+    <Modal transparent animationType="fade">
+      <BlurView>
+        <SafeAreaView style={styles.viewImageInnerContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => {
+                setLoaded(false);
+                removeViewedImage();
+              }}
+            >
+              <Feather name="x" size={25} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Feather name={"x"} size={24} color={"black"} />
-          </TouchableOpacity>
-        </View>
-        <Animated.Image
-          resizeMode="center"
-          style={[styles.viewImage, showStyle]}
-          onLoad={() => setLoaded(true)}
-          source={{ uri: selectedImage.uri }}
-        />
-      </SafeAreaView>
-    </AnimatedBlur>
+            <Animated.Image
+              resizeMode="center"
+              style={[styles.image, showStyle]}
+              onLoad={() => setLoaded(true)}
+              source={{ uri: selectedImage.uri }}
+            />
+            {!loaded && (
+              <ActivityIndicator
+                size="large"
+                color="black"
+                style={{ position: "absolute" }}
+              />
+            )}
+          </View>
+        </SafeAreaView>
+      </BlurView>
+    </Modal>
   );
 };
 
@@ -73,19 +90,21 @@ const styles = StyleSheet.create({
     height: "100%",
     position: "absolute",
   },
-  viewImage: {
-    width: "80%",
-    height: "80%",
+  image: {
+    width: "95%",
+    height: "100%",
   },
   viewImageInnerContainer: {
     width: "100%",
     height: "100%",
     alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "flex-start",
     height: 45,
   },
   headerIcon: {

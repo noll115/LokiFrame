@@ -1,17 +1,17 @@
 **/node_modules
-client/.expo/
-client/dist/
-client/npm-debug.*
-client/*.jks
-client/*.p8
-client/*.p12
-client/*.key
-client/*.mobileprovision
-client/*.orig.*
-client/web-build/
-
-client/# macOS
-client/.DS_Store
+lokiFrame-client/.expo/
+lokiFrame-client/dist/
+lokiFrame-client/npm-debug.*
+lokiFrame-client/*.jks
+lokiFrame-client/*.p8
+lokiFrame-client/*.p12
+lokiFrame-client/*.key
+lokiFrame-client/*.mobileprovision
+lokiFrame-client/*.orig.*
+lokiFrame-client/web-build/
+lokiFrame-client/ios
+lokiFrame-client/# macOS
+lokiFrame-client/.DS_Store
 
 photos/
 .DS_Store

@@ -5,12 +5,14 @@ const URL = __DEV__ ? "http://localhost:8080" : "magicmirror.local";
 interface ImageData {
   uri: string;
   toDelete: boolean;
+  fileName: string;
 }
 
-const createURILinks = (uriArray: string[]): ImageData[] => {
-  return uriArray.map((uri) => ({
-    uri: `${URL}/photos/${uri}`,
+const createURILinks = (fileNames: string[]): ImageData[] => {
+  return fileNames.map((fileName) => ({
+    uri: `${URL}/photos/${fileName}`,
     toDelete: false,
+    fileName,
   }));
 };
 
@@ -34,7 +36,7 @@ const useLokiFrameAPI = () => {
       body: data,
     });
     let newPhotos = createURILinks(await res.json());
-    console.log(newPhotos);
+    console.log(newPhotos.map((val) => val.uri));
     setImages(newPhotos);
   };
 
@@ -58,11 +60,33 @@ const useLokiFrameAPI = () => {
 
   const resetImages = () => {
     setImages((prevImages) =>
-      prevImages.map(({ uri }) => ({ uri, toDelete: false }))
+      prevImages.map((data) => ({ ...data, toDelete: false }))
     );
   };
 
-  return { images, uploadNewImages, toggleImageDelete, resetImages };
+  const confirmDelete = async () => {
+    const imagesToDelete = [];
+    for (let i = 0; i < images.length; i++) {
+      const element = images[i];
+      if (element.toDelete) imagesToDelete.push(element.fileName);
+    }
+    await fetch(`${URL}/photos`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(imagesToDelete),
+    });
+    setImages((prevImages) => prevImages.filter((data) => !data.toDelete));
+  };
+
+  return {
+    images,
+    uploadNewImages,
+    toggleImageDelete,
+    resetImages,
+    confirmDelete,
+  };
 };
 
 export { useLokiFrameAPI, ImageData };

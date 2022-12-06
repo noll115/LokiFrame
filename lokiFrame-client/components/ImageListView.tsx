@@ -1,7 +1,7 @@
 import {
   Button,
   FlatList,
-  Image,
+  ListRenderItem,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,12 +11,21 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { ImageData, useLokiFrameAPI } from "../utils/frameAPI";
 import { Feather } from "@expo/vector-icons";
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import ImageViewer from "./ImageViewer";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 
 const ImageListView: FC = () => {
-  const { images, uploadNewImages, toggleImageDelete, resetImages } =
-    useLokiFrameAPI();
+  const {
+    images,
+    uploadNewImages,
+    toggleImageDelete,
+    resetImages,
+    confirmDelete,
+  } = useLokiFrameAPI();
   const [deleteImages, setdeleteImages] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
 
@@ -34,7 +43,6 @@ const ImageListView: FC = () => {
       videoQuality:
         ImagePicker.UIImagePickerControllerQualityType.IFrame1280x720,
     });
-    console.log(res);
     if (!res.canceled) {
       await uploadNewImages(res.assets);
     }
@@ -49,6 +57,16 @@ const ImageListView: FC = () => {
   const removeSelectedImage = () => {
     setSelectedImage(null);
   };
+
+  const renderItem: ListRenderItem<ImageData> = ({ item, index }) => (
+    <ImageDisplay
+      key={item.fileName}
+      deleteImages={deleteImages}
+      image={item}
+      toggleImageDelete={toggleImageDelete(index)}
+      viewImage={viewImage(index)}
+    />
+  );
 
   return (
     <>
@@ -66,38 +84,15 @@ const ImageListView: FC = () => {
           >
             <Feather
               name={deleteImages ? "x" : "trash"}
-              size={24}
+              size={25}
               color={deleteImages ? "black" : "red"}
             />
           </TouchableOpacity>
         </View>
         <FlatList
+          initialNumToRender={18}
           data={images}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              key={item.uri}
-              style={styles.imageContainer}
-              onPress={
-                deleteImages ? toggleImageDelete(index) : viewImage(index)
-              }
-            >
-              <Image
-                style={styles.image}
-                onLayout={(event) => {}}
-                source={{
-                  uri: item.uri,
-                }}
-              />
-              {deleteImages && (
-                <Feather
-                  style={styles.deleteIcon}
-                  name={item.toDelete ? "check-circle" : "circle"}
-                  size={24}
-                  color={item.toDelete ? "red" : "black"}
-                />
-              )}
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
           numColumns={3}
         />
         <View style={styles.bottomView}>
@@ -106,7 +101,10 @@ const ImageListView: FC = () => {
               title="Remove"
               color="red"
               disabled={!images.some((image) => image.toDelete)}
-              onPress={pickImages}
+              onPress={() => {
+                setdeleteImages(!deleteImages);
+                confirmDelete();
+              }}
             />
           ) : (
             <Button title="Add New Photos" onPress={pickImages} />
@@ -118,6 +116,46 @@ const ImageListView: FC = () => {
         removeViewedImage={removeSelectedImage}
       />
     </>
+  );
+};
+
+const ImageDisplay: FC<{
+  image: ImageData;
+  toggleImageDelete: () => void;
+  viewImage: () => void;
+  deleteImages: boolean;
+}> = ({ image, toggleImageDelete, viewImage, deleteImages }) => {
+  const [loaded, setLoaded] = useState(false);
+
+  const fadeInStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(loaded ? 1 : 0),
+    };
+  }, [loaded]);
+
+  console.log(image.fileName, loaded);
+
+  return (
+    <TouchableOpacity
+      style={styles.imageContainer}
+      onPress={deleteImages ? toggleImageDelete : viewImage}
+    >
+      <Animated.Image
+        style={[styles.image, fadeInStyle]}
+        onLoad={() => setLoaded(true)}
+        source={{
+          uri: image.uri,
+        }}
+      />
+      {deleteImages && (
+        <Feather
+          style={styles.deleteIcon}
+          name={image.toDelete ? "check-circle" : "circle"}
+          size={24}
+          color={image.toDelete ? "red" : "black"}
+        />
+      )}
+    </TouchableOpacity>
   );
 };
 

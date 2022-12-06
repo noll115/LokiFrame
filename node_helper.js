@@ -1,6 +1,7 @@
 const NodeHelper = require("node_helper");
 const Log = require("logger");
-let fs = require("fs");
+let fs = require("fs/promises");
+let fsSync = require("fs");
 const multer = require("multer");
 const express = require("express");
 
@@ -12,7 +13,7 @@ module.exports = NodeHelper.create({
   interval: 10000,
   start: function () {
     const photoPath = `${this.path}/photos`;
-    this.files = fs.readdirSync(photoPath);
+    this.files = fsSync.readdirSync(photoPath);
     this.upload = multer({
       storage: multer.diskStorage({
         destination: photoPath,
@@ -20,7 +21,7 @@ module.exports = NodeHelper.create({
           const fileTypeIndex = file.originalname.lastIndexOf(".");
           const fileName = file.originalname.substring(0, fileTypeIndex);
           const fileType = file.originalname.substring(fileTypeIndex);
-          const finalName = `${fileName}-${Date.now()}${fileType}`;
+          const finalName = `${Date.now()}-${fileName}${fileType}`;
           cb(null, finalName);
         },
       }),
@@ -32,9 +33,14 @@ module.exports = NodeHelper.create({
         Log.log(this.files);
         res.json(this.files);
       })
-      .delete(express.json(), (req, res) => {
-        Log.log(req.body);
-        res.json(req.body);
+      .delete(express.json(), async (req, res) => {
+        let deletes = [];
+        for (const fileName of req.body) {
+          deletes.push(fs.unlink(`${photoPath}/${fileName}`));
+        }
+        await Promise.all(deletes);
+        this.files = fsSync.readdirSync(photoPath);
+        res.end();
       })
       .get((req, res) => {
         res.send(this.files);
