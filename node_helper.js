@@ -18,11 +18,7 @@ module.exports = NodeHelper.create({
       storage: multer.diskStorage({
         destination: photoPath,
         filename: (req, file, cb) => {
-          const fileTypeIndex = file.originalname.lastIndexOf(".");
-          const fileName = file.originalname.substring(0, fileTypeIndex);
-          const fileType = file.originalname.substring(fileTypeIndex);
-          const finalName = `${Date.now()}-${fileName}${fileType}`;
-          cb(null, finalName);
+          cb(null, file.originalname);
         },
       }),
     });
@@ -43,7 +39,7 @@ module.exports = NodeHelper.create({
         res.end();
       })
       .get((req, res) => {
-        res.send(this.files);
+        res.json(this.files);
       });
     this.expressApp.get("/photos/:photoId", (req, res) => {
       const { photoId } = req.params;

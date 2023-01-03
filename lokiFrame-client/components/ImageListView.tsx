@@ -1,7 +1,5 @@
 import {
   Button,
-  FlatList,
-  ListRenderItem,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,12 +9,10 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { ImageData, useLokiFrameAPI } from "../utils/frameAPI";
 import { Feather } from "@expo/vector-icons";
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import ImageViewer from "./ImageViewer";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+
+import ImageGridDisplay from "./ImageList";
 
 const ImageListView: FC = () => {
   const {
@@ -25,6 +21,7 @@ const ImageListView: FC = () => {
     toggleImageDelete,
     resetImages,
     confirmDelete,
+    isLoading,
   } = useLokiFrameAPI();
   const [deleteImages, setdeleteImages] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
@@ -48,25 +45,9 @@ const ImageListView: FC = () => {
     }
   };
 
-  const viewImage = (index: number) => {
-    return () => {
-      setSelectedImage(images[index]);
-    };
-  };
-
-  const removeSelectedImage = () => {
+  const removeSelectedImage = useCallback(() => {
     setSelectedImage(null);
-  };
-
-  const renderItem: ListRenderItem<ImageData> = ({ item, index }) => (
-    <ImageDisplay
-      key={item.fileName}
-      deleteImages={deleteImages}
-      image={item}
-      toggleImageDelete={toggleImageDelete(index)}
-      viewImage={viewImage(index)}
-    />
-  );
+  }, []);
 
   return (
     <>
@@ -83,17 +64,18 @@ const ImageListView: FC = () => {
             }}
           >
             <Feather
+              disabled={isLoading}
               name={deleteImages ? "x" : "trash"}
               size={25}
               color={deleteImages ? "black" : "red"}
             />
           </TouchableOpacity>
         </View>
-        <FlatList
-          initialNumToRender={18}
-          data={images}
-          renderItem={renderItem}
-          numColumns={3}
+        <ImageGridDisplay
+          images={images}
+          deleteImages={deleteImages}
+          toggleImageDelete={toggleImageDelete}
+          viewImage={setSelectedImage}
         />
         <View style={styles.bottomView}>
           {deleteImages ? (
@@ -119,46 +101,6 @@ const ImageListView: FC = () => {
   );
 };
 
-const ImageDisplay: FC<{
-  image: ImageData;
-  toggleImageDelete: () => void;
-  viewImage: () => void;
-  deleteImages: boolean;
-}> = ({ image, toggleImageDelete, viewImage, deleteImages }) => {
-  const [loaded, setLoaded] = useState(false);
-
-  const fadeInStyle = useAnimatedStyle(() => {
-    return {
-      opacity: withTiming(loaded ? 1 : 0),
-    };
-  }, [loaded]);
-
-  console.log(image.fileName, loaded);
-
-  return (
-    <TouchableOpacity
-      style={styles.imageContainer}
-      onPress={deleteImages ? toggleImageDelete : viewImage}
-    >
-      <Animated.Image
-        style={[styles.image, fadeInStyle]}
-        onLoad={() => setLoaded(true)}
-        source={{
-          uri: image.uri,
-        }}
-      />
-      {deleteImages && (
-        <Feather
-          style={styles.deleteIcon}
-          name={image.toDelete ? "check-circle" : "circle"}
-          size={24}
-          color={image.toDelete ? "red" : "black"}
-        />
-      )}
-    </TouchableOpacity>
-  );
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -170,6 +112,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 45,
+    marginBottom: 15,
   },
   headerIcon: {
     position: "absolute",
@@ -180,22 +123,6 @@ const styles = StyleSheet.create({
   },
   bottomView: {
     paddingVertical: 7,
-  },
-  imageContainer: {
-    width: 120,
-    height: 120,
-    padding: 2,
-    position: "relative",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-
-  deleteIcon: {
-    position: "absolute",
-    right: 10,
-    top: 10,
   },
 });
 

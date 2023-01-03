@@ -19,7 +19,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "dev.noelgomez.loki-frame"
     },
     "android": {
@@ -42,6 +42,11 @@
         }
       ],
       "expo-community-flipper"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "23ee1b19-48fc-4c74-a9ec-e244b85bf0d3"
+      }
+    }
   }
 }

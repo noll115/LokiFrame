@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { ImageData } from "../utils/frameAPI";
+import FastImage from "react-native-fast-image";
 
 const ImageViewer: FC<{
   selectedImage: ImageData | null;
@@ -64,10 +65,13 @@ const ImageViewer: FC<{
               alignItems: "center",
             }}
           >
-            <Animated.Image
-              resizeMode="center"
-              style={[styles.image, showStyle]}
-              onLoad={() => setLoaded(true)}
+            <FastImage
+              resizeMode="contain"
+              style={[styles.image]}
+              onLoad={() => {
+                console.log("load", selectedImage.fileName);
+                setLoaded(true);
+              }}
               source={{ uri: selectedImage.uri }}
             />
             {!loaded && (
