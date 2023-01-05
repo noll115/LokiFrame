@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var deletingImages = false
     @State var pickingPhotos = false
     @State var selectedImg : ImageData?
+    @State var settingsView = false
     @Namespace private var animation
     
     init() {
@@ -26,7 +27,7 @@ struct ContentView: View {
             VStack {
                 ImageDisplayList(selectedImg: $selectedImg,
                                  namespace: animation,
-                                 deletingImages: $deletingImages
+                                 deletingImages: deletingImages
                 )
                 if deletingImages {
                     deleteBtn
@@ -37,7 +38,7 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Photos")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         deletingImages.toggle()
                         
@@ -46,6 +47,16 @@ struct ContentView: View {
                             .symbolRenderingMode(deletingImages ? .monochrome : .multicolor)
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        settingsView = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $settingsView) {
+                SettingsView()
             }
         }
         .overlay(imagePreview)

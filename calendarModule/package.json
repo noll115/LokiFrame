@@ -1,8 +1,8 @@
 {
-  "name": "mmm-lokiframe",
+  "name": "calendar-module",
   "version": "1.0.0",
   "description": "",
-  "main": "MMM-LokiFrame.js",
+  "main": "calendarModule.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,11 +12,7 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/noll115/MMM-LokiFrame/issues"
-  },
-  "homepage": "https://github.com/noll115/MMM-LokiFrame#readme",
   "dependencies": {
-    "multer": "^1.4.5-lts.1"
+    "googleapis": "^110.0.0"
   }
 }

@@ -1,4 +1,4 @@
-Module.register("MMM-LokiFrame", {
+Module.register("photosModule", {
   nextPhotoPath: null,
   prevPhotoPath: null,
   start: function () {
@@ -10,28 +10,38 @@ Module.register("MMM-LokiFrame", {
     imgWrapper.classList.add("image");
     let backgroundImg = document.createElement("img");
     backgroundImg.classList.add("background");
+    let onLoad = null;
     if (path) {
-      img.src = `/photos/${path}`;
-      backgroundImg.src = `/photos/${path}`;
+      onLoad = new Promise((res, rej) => {
+        img.onload = res;
+      });
+      let finalPath = `/photos/${path}`;
+      img.src = finalPath;
+      backgroundImg.src = finalPath;
     }
     imgWrapper.appendChild(backgroundImg);
     imgWrapper.appendChild(img);
-    return imgWrapper;
+    return [imgWrapper, onLoad];
   },
   getDom: function () {
     const wrapper = document.createElement("div");
     wrapper.classList.add("fullscreen");
-    let topImg = this.createImg(this.prevPhotoPath);
-    let btmImg = this.createImg(this.nextPhotoPath);
-    if (this.nextPhotoPath) {
-      topImg.classList.add("fadeOut");
-    }
+    let [topImg] = this.createImg(this.prevPhotoPath);
+    let [btmImg, onLoad] = this.createImg(this.nextPhotoPath);
+    onLoad?.then((_) => {
+      this.readyForNext(topImg);
+    });
     wrapper.appendChild(btmImg);
     wrapper.appendChild(topImg);
     return wrapper;
   },
+  readyForNext(topImg) {
+    console.log("READY");
+    topImg.classList.add("fadeOut");
+    this.sendSocketNotification("READY_FOR_NEXT");
+  },
   getStyles() {
-    return ["lokiFrame.css"];
+    return ["photosModule.css"];
   },
   socketNotificationReceived: function (notification, payload) {
     switch (notification) {

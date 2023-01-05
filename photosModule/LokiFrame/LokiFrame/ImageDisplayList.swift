@@ -11,29 +11,28 @@ struct ImageDisplayList: View {
     @EnvironmentObject var frameData: FrameData
     @Binding var selectedImg : ImageData?
     let namespace: Namespace.ID
-    @Binding var deletingImages: Bool
+    let deletingImages: Bool
     
     private let columns = [GridItem(.flexible(),spacing: 3),
                            GridItem(.flexible(),spacing: 3),
                            GridItem(.flexible(),spacing: 3)]
     
     var body: some View {
-        Group {
-            ScrollView {
-                if let imageResult = frameData.imageResult {
-                    switch imageResult {
-                    case .success:
-                        gridList
-                    case .failure(let error):
-                        errorView(error: error)
-                    }
-                } else {
-                    ProgressView()
+        
+        ScrollView {
+            if let imageResult = frameData.imageResult {
+                switch imageResult {
+                case .success:
+                    gridList
+                case .failure(let error):
+                    errorView(error: error)
                 }
-            }.refreshable {
-                Task {
-                    await frameData.getPhotos()
-                }
+            } else {
+                ProgressView()
+            }
+        }.refreshable {
+            Task {
+                await frameData.getPhotos()
             }
         }
         .onChange(of: deletingImages) { deleting in
@@ -75,11 +74,10 @@ struct ImageDisplayList: View {
 struct ImageDisplayList_Previews: PreviewProvider {
     static let catImg = "cat.jpeg"
     @State static var selectedImg : ImageData? = nil
-    @State static var deletingImg = false
     @Namespace static var animation
     
     static var previews: some View {
-        ImageDisplayList(selectedImg: $selectedImg, namespace: animation, deletingImages: $deletingImg)
+        ImageDisplayList(selectedImg: $selectedImg, namespace: animation, deletingImages: false)
             .environmentObject(
                 FrameData(images: [catImg,
                                    catImg,

@@ -60,3 +60,5 @@ playground.xcworkspace
 # Package.pins
 # Package.resolved
 .build/
+token.json
+credentials.json

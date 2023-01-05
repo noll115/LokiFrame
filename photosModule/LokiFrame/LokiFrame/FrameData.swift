@@ -8,14 +8,19 @@
 import Foundation
 import SwiftUI
 import PhotosUI
-
+import GoogleSignIn
 
 @MainActor
 class FrameData: ObservableObject {
     @Published var imageResult:Result<[ImageData],Error>?
     @Published var images: [ImageData] = []
-    
+    @Published var user: UserState = .notLoggedIn
+    @Published var modulesHidden: [FrameModules] = []
+    let SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
     let serverPhotosUrl = URL(string: "http://192.168.50.72:8080/photos")!
+    let serverAuthCodeUrl = URL(string: "http://192.168.50.72:8080/cal/authCode")!
+    let serverLogoutUrl = URL(string: "http://192.168.50.72:8080/cal/logout")!
+    let serverModuleHide = URL(string: "http://192.168.50.72:8080/hide")!
     
     init(images:[String]) {
         self.imageResult = .success(images.map({ fileName in
@@ -116,14 +121,106 @@ class FrameData: ObservableObject {
         } catch {
             imageResult = .failure(error)
         }
-
+        
     }
     
-    func generateImageDatas(_ filenames:[String]) -> [ImageData] {
+    private func generateImageDatas(_ filenames:[String]) -> [ImageData] {
         filenames.map { name in
                 .init(filename: name, imageURL: "\(serverPhotosUrl.absoluteString)/\(name)")
         }
     }
+    
+    func googleSignIn(viewController: UIViewController) async {
+        do {
+            var res = try await GIDSignIn.sharedInstance.signIn(withPresenting: viewController, hint: nil, additionalScopes: SCOPES)
+            guard let scopes = res.user.grantedScopes else {
+                return
+            }
+            if !scopes.contains(self.SCOPES) {
+                res = try await res.user.addScopes(self.SCOPES, presenting: viewController)
+            }
+            guard let serverAuthCode = res.serverAuthCode else {
+                return
+            }
+            try await sendToken(serverAuthCode: serverAuthCode)
+            self.user = .loggedIn(res.user)
+        } catch {
+            self.user = .Error(error)
+        }
+        
+    }
+    
+    func restoreSignIn() async {
+        do {
+            let res = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+            self.user = .loggedIn(res)
+        } catch {
+            if let err = error as? GIDSignInError {
+                if err.code != .hasNoAuthInKeychain {
+                    return
+                }
+            }
+            self.user = .Error(error)
+            await signOutServer()
+        }
+    }
+    
+    func googleSignOut() {
+        GIDSignIn.sharedInstance.signOut()
+        self.user = .notLoggedIn
+        Task {
+            await signOutServer()
+        }
+    }
+    
+    func toggleModule(module: FrameModules) async {
+        let body = ["module":module]
+        guard let bodyData = try? JSONEncoder().encode(body) else {
+            return
+        }
+        var req = URLRequest(url: serverModuleHide)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = bodyData
+        let res = try? await URLSession.shared.data(for: req);
+        guard let (body,_) = res else {
+            return
+        }
+        guard let newArr = try? JSONDecoder().decode([FrameModules].self, from: body) else {
+            return
+        }
+        self.modulesHidden = newArr
+    }
+    
+    func getCurrentModulesStatus() async {
+        let res = try? await URLSession.shared.data(from: serverModuleHide)
+        guard let (data,_) = res else {
+            return
+        }
+        let modules = try? JSONDecoder().decode([FrameModules].self, from: data)
+        guard let modules = modules else {
+            return
+        }
+        print(modules)
+        modulesHidden = modules
+    }
+    
+    private func sendToken(serverAuthCode: String) async throws {
+        let body = ["serverAuthCode": serverAuthCode]
+        guard let bodyData = try? JSONEncoder().encode(body) else {
+            return
+        }
+        var req = URLRequest(url: serverAuthCodeUrl)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = bodyData
+        let _ = try await URLSession.shared.data(for: req)
+    }
+    
+    private func signOutServer() async {
+        let _ = try? await URLSession.shared.data(from: serverLogoutUrl)
+    }
+    
     
 }
 

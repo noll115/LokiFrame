@@ -10,7 +10,7 @@ const PAGE_SIZE = 20;
 module.exports = NodeHelper.create({
   files: [],
   photoIndex: 0,
-  interval: 10000,
+  intervalTime: 10000,
   start: function () {
     const photoPath = `${this.path}/photos`;
     this.files = fsSync.readdirSync(photoPath);
@@ -64,17 +64,15 @@ module.exports = NodeHelper.create({
         nextPath: this.files[this.photoIndex],
         prevPath: null,
       });
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
-      this.interval = setInterval(() => {
-        const { nextFile, prevFile } = this.getNextFiles();
-        Log.log("update");
+    } else if (notification === "READY_FOR_NEXT") {
+      const { nextFile, prevFile } = this.getNextFiles();
+      Log.log("update");
+      setTimeout(() => {
         this.sendSocketNotification("GET_NEXT_IMAGE", {
           nextPath: nextFile,
           prevPath: prevFile,
         });
-      }, this.interval);
+      }, this.intervalTime);
     }
   },
 });

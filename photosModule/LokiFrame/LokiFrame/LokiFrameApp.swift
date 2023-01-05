@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct LokiFrameApp: App {
@@ -15,6 +16,13 @@ struct LokiFrameApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(frameData)
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
+                .task {
+                    await frameData.restoreSignIn()
+                    await frameData.getCurrentModulesStatus()
+                }
         }
     }
 }

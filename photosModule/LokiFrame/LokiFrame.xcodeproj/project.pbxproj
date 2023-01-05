@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F0738B529654DF1001ED4B5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0738B429654DF1001ED4B5 /* SettingsView.swift */; };
+		1F0738B829654E24001ED4B5 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1F0738B729654E24001ED4B5 /* GoogleSignIn */; };
+		1F0738BA29654E24001ED4B5 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1F0738B929654E24001ED4B5 /* GoogleSignInSwift */; };
 		1F14D843294810210076016F /* LokiFrameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14D842294810210076016F /* LokiFrameApp.swift */; };
 		1F14D845294810210076016F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14D844294810210076016F /* ContentView.swift */; };
 		1F14D847294810220076016F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F14D846294810220076016F /* Assets.xcassets */; };
@@ -16,9 +19,12 @@
 		1F14D855294815580076016F /* FrameData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14D854294815580076016F /* FrameData.swift */; };
 		1F14D857294818AD0076016F /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14D856294818AD0076016F /* ImageData.swift */; };
 		1F1B6E542962EBA400129AC0 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1F1B6E532962EBA400129AC0 /* NukeUI */; };
+		1F2BF30E29668750002C4D90 /* FrameModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2BF30D29668750002C4D90 /* FrameModules.swift */; };
+		1FC8963D296611F40018767F /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC8963C296611F40018767F /* UserState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F0738B429654DF1001ED4B5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1F14D83F294810210076016F /* LokiFrame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LokiFrame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F14D842294810210076016F /* LokiFrameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LokiFrameApp.swift; sourceTree = "<group>"; };
 		1F14D844294810210076016F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -28,7 +34,9 @@
 		1F14D852294813CD0076016F /* ImageDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDisplay.swift; sourceTree = "<group>"; };
 		1F14D854294815580076016F /* FrameData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameData.swift; sourceTree = "<group>"; };
 		1F14D856294818AD0076016F /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
+		1F2BF30D29668750002C4D90 /* FrameModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameModules.swift; sourceTree = "<group>"; };
 		1FC5833C29629EDE000ADA1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1FC8963C296611F40018767F /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F0738BA29654E24001ED4B5 /* GoogleSignInSwift in Frameworks */,
 				1F1B6E542962EBA400129AC0 /* NukeUI in Frameworks */,
+				1F0738B829654E24001ED4B5 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +81,9 @@
 				1F14D852294813CD0076016F /* ImageDisplay.swift */,
 				1F14D854294815580076016F /* FrameData.swift */,
 				1F14D856294818AD0076016F /* ImageData.swift */,
+				1F0738B429654DF1001ED4B5 /* SettingsView.swift */,
+				1FC8963C296611F40018767F /* UserState.swift */,
+				1F2BF30D29668750002C4D90 /* FrameModules.swift */,
 			);
 			path = LokiFrame;
 			sourceTree = "<group>";
@@ -101,6 +114,8 @@
 			name = LokiFrame;
 			packageProductDependencies = (
 				1F1B6E532962EBA400129AC0 /* NukeUI */,
+				1F0738B729654E24001ED4B5 /* GoogleSignIn */,
+				1F0738B929654E24001ED4B5 /* GoogleSignInSwift */,
 			);
 			productName = LokiFrame;
 			productReference = 1F14D83F294810210076016F /* LokiFrame.app */;
@@ -132,6 +147,7 @@
 			mainGroup = 1F14D836294810210076016F;
 			packageReferences = (
 				1F1B6E522962EBA400129AC0 /* XCRemoteSwiftPackageReference "Nuke" */,
+				1F0738B629654E24001ED4B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 1F14D840294810210076016F /* Products */;
 			projectDirPath = "";
@@ -159,9 +175,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F0738B529654DF1001ED4B5 /* SettingsView.swift in Sources */,
 				1F14D851294813C30076016F /* ImageDisplayList.swift in Sources */,
+				1FC8963D296611F40018767F /* UserState.swift in Sources */,
 				1F14D855294815580076016F /* FrameData.swift in Sources */,
 				1F14D845294810210076016F /* ContentView.swift in Sources */,
+				1F2BF30E29668750002C4D90 /* FrameModules.swift in Sources */,
 				1F14D853294813CD0076016F /* ImageDisplay.swift in Sources */,
 				1F14D843294810210076016F /* LokiFrameApp.swift in Sources */,
 				1F14D857294818AD0076016F /* ImageData.swift in Sources */,
@@ -375,6 +394,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1F0738B629654E24001ED4B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		1F1B6E522962EBA400129AC0 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -386,6 +413,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1F0738B729654E24001ED4B5 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1F0738B629654E24001ED4B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		1F0738B929654E24001ED4B5 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1F0738B629654E24001ED4B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		1F1B6E532962EBA400129AC0 /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1F1B6E522962EBA400129AC0 /* XCRemoteSwiftPackageReference "Nuke" */;
