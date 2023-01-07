@@ -30,13 +30,13 @@ module.exports = NodeHelper.create({
     this.expressApp
       .route("/hide")
       .get(async (req, res) => {
-        console.log("hide");
+        Log.log("hide");
         let modules = await this.getModulesHide();
-        console.log("modules " + JSON.stringify(modules));
+        Log.log("modules " + JSON.stringify(modules));
         res.json(modules);
       })
       .post(express.json(), async (req, res) => {
-        console.log("new hide");
+        Log.log("new hide");
         let { module } = req.body;
         res.json(await this.toggleModuleHide(module));
       });

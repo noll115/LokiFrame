@@ -18,7 +18,9 @@ struct SettingsView: View {
             calendarSettings
         }
         .navigationTitle("Settings")
-        
+        .task {
+            await frameData.getCurrentModulesStatus()
+        }
     }
     
     func handleSignIn() {

@@ -21,7 +21,6 @@ struct LokiFrameApp: App {
                 }
                 .task {
                     await frameData.restoreSignIn()
-                    await frameData.getCurrentModulesStatus()
                 }
         }
     }

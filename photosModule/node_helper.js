@@ -11,6 +11,7 @@ module.exports = NodeHelper.create({
   files: [],
   photoIndex: 0,
   intervalTime: 10000,
+  timeoutRef: null,
   start: function () {
     const photoPath = `${this.path}/photos`;
     this.files = fsSync.readdirSync(photoPath);
@@ -67,7 +68,11 @@ module.exports = NodeHelper.create({
     } else if (notification === "READY_FOR_NEXT") {
       const { nextFile, prevFile } = this.getNextFiles();
       Log.log("update");
-      setTimeout(() => {
+      if (this.timeoutRef) {
+        return;
+      }
+      this.timeoutRef = setTimeout(() => {
+        this.timeoutRef = null;
         this.sendSocketNotification("GET_NEXT_IMAGE", {
           nextPath: nextFile,
           prevPath: prevFile,

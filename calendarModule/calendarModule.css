@@ -1,37 +1,55 @@
-.calendarModule .fullscreen {
-  width: 100vw;
-  height: 100vh;
-}
-.calendarModule .image {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+.calendarModule .event {
+  background-color: rgba(128, 128, 128, 0.4);
+  border-radius: 10px;
+  padding: 2px 8px;
+  color: whitesmoke;
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.calendarModule img {
-  position: absolute;
-  height: 100%;
-}
-.calendarModule .background {
-  width: 100%;
-  height: 100%;
-  filter: blur(1.5rem) brightness(70%);
+  justify-content: start;
 }
 
-.calendarModule .fadeOut {
-  animation-name: fadeOut;
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-in-out;
+.calendarModule .event .title {
+  font-weight: bold;
 }
 
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+.calendarModule .timed .event:not(:first-child) {
+  margin-top: 4px;
+}
+
+.calendarModule .allDay {
+  margin-bottom: 15px;
+}
+
+.calendarModule .timed.event.current {
+  background-color: grey;
+}
+
+.calendarModule .divider {
+  height: 2px;
+  border-width: 0;
+  color: gray;
+  background-color: gray;
+}
+
+.calendarModule .timed .title {
+  text-transform: capitalize;
+}
+
+.calendarModule .timed .time {
+  padding-right: 10px;
+}
+
+:root {
+  --gap-body-top: 20px;
+  --gap-body-right: 10px;
+  --gap-body-bottom: 20px;
+  --gap-body-left: 10px;
+}
+
+.region.top.right,
+.region.top.left,
+.region.top.center {
+  top: 0%;
+}
+.clockGrid {
+  gap: 0;
 }

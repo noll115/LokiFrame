@@ -1,5 +1,6 @@
 const { google } = require("googleapis");
 const { readFile, writeFile, unlink, access } = require("fs/promises");
+const Log = require("logger");
 
 let oauth2Client;
 let tokenPath;
@@ -29,7 +30,6 @@ async function init(path) {
     redirectUri: "",
   });
   oauth2Client.on("tokens", (tokens) => {
-    console.log(tokens);
     if (tokens.refresh_token) {
       saveToken({ refresh_token: tokens.refresh_token });
     }
@@ -64,17 +64,19 @@ async function getEvents() {
     return null;
   }
   const calendar = google.calendar({ version: "v3", auth: oauth2Client });
-  const endToday = new Date(new Date().setUTCHours(23, 59, 59, 999));
-  const startToday = new Date(new Date().setUTCHours(0, 0, 0, 0));
+  const startToday = new Date();
+  const endToday = new Date();
+  endToday.setHours(23, 59, 59, 999);
+  Log.log(startToday.toISOString(), endToday.toISOString());
   const res = await calendar.events.list({
     calendarId: "primary",
-    timeMin: startToday,
-    timeMax: endToday,
+    timeMin: startToday.toISOString(),
+    timeMax: endToday.toISOString(),
     singleEvents: true,
     orderBy: "startTime",
   });
   let events = res.data.items;
-  console.log(events);
+  Log.log(events);
   return events;
 }
 
