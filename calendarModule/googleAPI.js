@@ -122,7 +122,7 @@ async function getEvents() {
         timeMax: endToday.toISOString(),
         singleEvents: true,
         orderBy: "startTime",
-        maxResults: 5,
+        maxResults: 8,
       })
     );
   }
