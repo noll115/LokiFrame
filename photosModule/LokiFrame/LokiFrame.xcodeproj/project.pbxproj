@@ -20,6 +20,7 @@
 		1F14D857294818AD0076016F /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14D856294818AD0076016F /* ImageData.swift */; };
 		1F1B6E542962EBA400129AC0 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1F1B6E532962EBA400129AC0 /* NukeUI */; };
 		1F2BF30E29668750002C4D90 /* FrameModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2BF30D29668750002C4D90 /* FrameModules.swift */; };
+		1FC74012296B8D2C00681103 /* CalendarInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC74011296B8D2C00681103 /* CalendarInfo.swift */; };
 		1FC8963D296611F40018767F /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC8963C296611F40018767F /* UserState.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		1F14D856294818AD0076016F /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		1F2BF30D29668750002C4D90 /* FrameModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameModules.swift; sourceTree = "<group>"; };
 		1FC5833C29629EDE000ADA1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1FC74011296B8D2C00681103 /* CalendarInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarInfo.swift; sourceTree = "<group>"; };
 		1FC8963C296611F40018767F /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +86,7 @@
 				1F0738B429654DF1001ED4B5 /* SettingsView.swift */,
 				1FC8963C296611F40018767F /* UserState.swift */,
 				1F2BF30D29668750002C4D90 /* FrameModules.swift */,
+				1FC74011296B8D2C00681103 /* CalendarInfo.swift */,
 			);
 			path = LokiFrame;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F0738B529654DF1001ED4B5 /* SettingsView.swift in Sources */,
+				1FC74012296B8D2C00681103 /* CalendarInfo.swift in Sources */,
 				1F14D851294813C30076016F /* ImageDisplayList.swift in Sources */,
 				1FC8963D296611F40018767F /* UserState.swift in Sources */,
 				1F14D855294815580076016F /* FrameData.swift in Sources */,

@@ -15,11 +15,14 @@ class FrameData: ObservableObject {
     @Published var imageResult:Result<[ImageData],Error>?
     @Published var images: [ImageData] = []
     @Published var user: UserState = .notLoggedIn
-    @Published var modulesHidden: [FrameModules] = []
+    @Published var modulesHidden: Result<[FrameModules],Error>?
+    @Published var calendars: Result<[CalendarInfo],Error>?
     let SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
     let serverPhotosUrl = URL(string: "http://192.168.50.72:8080/photos")!
     let serverAuthCodeUrl = URL(string: "http://192.168.50.72:8080/cal/authCode")!
     let serverLogoutUrl = URL(string: "http://192.168.50.72:8080/cal/logout")!
+    let serverRefreshUrl = URL(string: "http://192.168.50.72:8080/cal/refresh")!
+    let serverCalendarsUrl = URL(string: "http://192.168.50.72:8080/cal/calendars")!
     let serverModuleHide = URL(string: "http://192.168.50.72:8080/hide")!
     
     init(images:[String]) {
@@ -143,7 +146,7 @@ class FrameData: ObservableObject {
                 return
             }
             try await sendToken(serverAuthCode: serverAuthCode)
-            self.user = .loggedIn(res.user)
+            await loginUser(user: res.user)
         } catch {
             self.user = .Error(error)
         }
@@ -153,7 +156,7 @@ class FrameData: ObservableObject {
     func restoreSignIn() async {
         do {
             let res = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
-            self.user = .loggedIn(res)
+            await loginUser(user: res)
         } catch {
             if let err = error as? GIDSignInError {
                 if err.code != .hasNoAuthInKeychain {
@@ -165,6 +168,12 @@ class FrameData: ObservableObject {
         }
     }
     
+    func loginUser(user: GIDGoogleUser) async {
+        self.user = .loggedIn(user)
+        await getCurrentModulesStatus()
+        await getAvailableCalendars()
+    }
+    
     func googleSignOut() {
         GIDSignIn.sharedInstance.signOut()
         self.user = .notLoggedIn
@@ -174,35 +183,74 @@ class FrameData: ObservableObject {
     }
     
     func toggleModule(module: FrameModules) async {
-        let body = ["module":module]
-        guard let bodyData = try? JSONEncoder().encode(body) else {
-            return
+        do {
+            let body = ["module":module]
+            let bodyData = try JSONEncoder().encode(body)
+            var req = URLRequest(url: serverModuleHide)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.httpBody = bodyData
+            let (newBody,_) = try await URLSession.shared.data(for: req);
+            let newArr = try JSONDecoder().decode([FrameModules].self, from: newBody)
+            self.modulesHidden = .success(newArr)
+        } catch {
+            self.modulesHidden = .failure(error)
         }
-        var req = URLRequest(url: serverModuleHide)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = bodyData
-        let res = try? await URLSession.shared.data(for: req);
-        guard let (body,_) = res else {
-            return
-        }
-        guard let newArr = try? JSONDecoder().decode([FrameModules].self, from: body) else {
-            return
-        }
-        self.modulesHidden = newArr
+        
     }
     
     func getCurrentModulesStatus() async {
-        let res = try? await URLSession.shared.data(from: serverModuleHide)
-        guard let (data,_) = res else {
+        do {
+            let (data,_) = try await URLSession.shared.data(from: serverModuleHide)
+            let modules = try JSONDecoder().decode([FrameModules].self, from: data)
+            print(modules)
+            modulesHidden = .success(modules)
+        } catch {
+            modulesHidden = .failure(error)
+        }
+        
+    }
+    
+    func refreshCalendar() async {
+        let _ = try? await URLSession.shared.data(from: serverRefreshUrl)
+    }
+    
+    func getAvailableCalendars() async {
+        print("GETTING")
+        do {
+            let (data,_) = try await URLSession.shared.data(from: serverCalendarsUrl)
+            let calendars = try JSONDecoder().decode([CalendarInfo].self, from: data)
+            self.calendars = .success(calendars)
+        } catch {
+            print(error)
+            self.calendars = .failure(error)
+        }
+    }
+    
+    func toggleCalendar(calendarId: String) async {
+        guard case .success(var prevCals) = calendars else {
             return
         }
-        let modules = try? JSONDecoder().decode([FrameModules].self, from: data)
-        guard let modules = modules else {
+        guard var index = prevCals.firstIndex(where: {$0.id == calendarId }) else {
             return
         }
-        print(modules)
-        modulesHidden = modules
+        prevCals[index].enabled = nil
+        calendars = .success(prevCals)
+        do {
+            let body = ["calendarId": calendarId]
+            
+            let bodyData = try JSONEncoder().encode(body)
+            var req = URLRequest(url: serverCalendarsUrl)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.httpBody = bodyData
+            let (newBody,_) = try await URLSession.shared.data(for: req)
+            let newArr = try JSONDecoder().decode([CalendarInfo].self, from: newBody)
+            self.calendars = .success(newArr)
+        } catch {
+            print(error)
+        }
+        
     }
     
     private func sendToken(serverAuthCode: String) async throws {

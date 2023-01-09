@@ -1,9 +1,16 @@
 let hideableModule = ["clock", "weather", "calendarModule"];
 
+let isCurrentEvent = (event) => {
+  const start = new Date(event.start.dateTime);
+  const end = new Date(event.end.dateTime);
+  return Date.now() >= start && Date.now() <= end;
+};
+
 Module.register("calendarModule", {
   events: null,
   refreshTimeout: null,
   start: function () {
+    console.log("start");
     this.getEvents();
   },
 
@@ -28,12 +35,11 @@ Module.register("calendarModule", {
     }
     const wrapper = document.createElement("div");
     wrapper.classList.add("timed");
-    for (const event of events) {
+    for (const event of events.slice(0, 4)) {
       const start = new Date(event.start.dateTime);
-      const end = new Date(event.end.dateTime);
       const eventWrapper = document.createElement("div");
       eventWrapper.classList.add("event");
-      if (Date.now() > start && Date.now() < end) {
+      if (isCurrentEvent(event)) {
         eventWrapper.classList.add("current");
       }
       const timer = document.createElement("span");
@@ -74,6 +80,7 @@ Module.register("calendarModule", {
     return ["calendarModule.css"];
   },
   getEvents() {
+    console.log(this.refreshTimeout, "event");
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
     }
@@ -97,28 +104,42 @@ Module.register("calendarModule", {
   getHeader() {
     return "Today's Agenda";
   },
+  suspend() {
+    console.log("suspend");
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+  },
+  resume() {
+    console.log("resume");
+    this.getEvents();
+  },
   socketNotificationReceived: function (notification, payload) {
     switch (notification) {
       case "RECIEVE_EVENTS":
-        this.events = payload;
-        this.events.length > 0 ? this.show(1000) : this.hide(1000);
+        this.events = payload ?? [];
+        this.events.length > 0
+          ? this.hidden && this.show(1000)
+          : !this.hidden && this.hide(1000);
+        let timeout;
         let firstTimedEvent = this.events.find((event) => event.start.dateTime);
         if (firstTimedEvent) {
-          const end = new Date(firstTimedEvent.end.dateTime);
-          let timeout = end - Date.now();
-          console.log(timeout);
-          this.refreshTimeout = setTimeout(() => {
-            this.getEvents();
-          }, timeout);
+          if (isCurrentEvent(firstTimedEvent)) {
+            const end = new Date(firstTimedEvent.end.dateTime);
+            timeout = end - Date.now();
+          } else {
+            const start = new Date(firstTimedEvent.start.dateTime);
+            timeout = start - Date.now();
+          }
         } else {
           let endDay = new Date();
           endDay.setHours(24, 0, 0, 0);
-          let timeout = endDay - Date.now();
-          this.refreshTimeout = setTimeout(() => {
-            this.getEvents();
-          }, timeout);
+          timeout = endDay - Date.now();
         }
-        this.updateDom();
+        this.refreshTimeout = setTimeout(() => {
+          this.getEvents();
+        }, timeout);
+        this.updateDom(500);
         break;
       case "GET_MODULES_HIDE":
         this.sendSocketNotification(

@@ -1,6 +1,6 @@
 .calendarModule .event {
   background-color: rgba(128, 128, 128, 0.4);
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 2px 8px;
   color: whitesmoke;
   display: flex;
@@ -19,12 +19,12 @@
   margin-bottom: 15px;
 }
 
-.calendarModule .timed.event.current {
+.calendarModule .timed .event.current {
   background-color: grey;
 }
 
 .calendarModule .divider {
-  height: 2px;
+  height: 1px;
   border-width: 0;
   color: gray;
   background-color: gray;
@@ -37,12 +37,21 @@
 .calendarModule .timed .time {
   padding-right: 10px;
 }
+.calendarModule .module-header {
+  border-bottom: 2px solid var(--color-text-dimmed);
+  color: whitesmoke;
+}
 
 :root {
   --gap-body-top: 20px;
   --gap-body-right: 10px;
-  --gap-body-bottom: 20px;
+  --gap-body-bottom: 10px;
   --gap-body-left: 10px;
+}
+
+body {
+  max-width: 460px;
+  max-height: 800px;
 }
 
 .region.top.right,

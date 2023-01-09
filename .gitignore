@@ -62,3 +62,4 @@ playground.xcworkspace
 .build/
 token.json
 credentials.json
+calendars.json

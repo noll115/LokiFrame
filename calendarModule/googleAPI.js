@@ -4,7 +4,9 @@ const Log = require("logger");
 
 let oauth2Client;
 let tokenPath;
+let calendarsPath;
 let loggedIn = false;
+let calendars = [];
 
 async function saveToken(newToken) {
   let prevToken = getToken();
@@ -23,6 +25,7 @@ async function getToken() {
 async function init(path) {
   let data = await readFile(`${path}/credentials.json`, "utf-8");
   tokenPath = `${path}/token.json`;
+  calendarsPath = `${path}/calendars.json`;
   let creds = JSON.parse(data);
   oauth2Client = new google.auth.OAuth2({
     clientId: creds.web.client_id,
@@ -36,15 +39,19 @@ async function init(path) {
   });
   let prevToken = await getToken();
   if (prevToken) {
-    oauth2Client.setCredentials(prevToken);
-    loggedIn = true;
+    login(prevToken);
   }
 }
 
-async function login(codeAuth) {
+async function obtainToken(codeAuth) {
   const { tokens } = await oauth2Client.getToken(codeAuth);
   saveToken(tokens);
+  login(tokens);
+}
+
+async function login(tokens) {
   oauth2Client.setCredentials(tokens);
+  calendars = await getUserCalendars();
   loggedIn = true;
 }
 
@@ -54,30 +61,85 @@ function isLoggedIn() {
 
 async function logout() {
   oauth2Client.revokeCredentials();
+  loggedIn = false;
   try {
     await unlink(tokenPath);
+    await unlink(calendarsPath);
   } catch (err) {}
 }
 
-async function getEvents() {
+async function getAPICalendars() {
   if (!isLoggedIn) {
+    return [];
+  }
+  const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+  const res = await calendar.calendarList.list();
+  return res.data.items.map((cal) => ({
+    id: cal.id,
+    summary: cal.summary,
+    enabled: true,
+  }));
+}
+
+async function getUserCalendars() {
+  try {
+    let str = await readFile(calendarsPath, "utf-8");
+    let data = JSON.parse(str);
+    let apiData = await getAPICalendars();
+    let notInCache = apiData.filter(
+      (cal) => data.findIndex((d) => d.id === cal.id) == -1
+    );
+    let res = data.concat(notInCache);
+    return res;
+  } catch (err) {}
+  return await getAPICalendars();
+}
+
+async function toggleCalendar(calendarId) {
+  if (!isLoggedIn) {
+    return [];
+  }
+  let cal = calendars.find((cal) => cal.id === calendarId);
+  cal.enabled = !cal.enabled;
+  await writeFile(calendarsPath, JSON.stringify(calendars));
+  return calendars;
+}
+
+async function getEvents() {
+  if (!isLoggedIn()) {
     return null;
   }
   const calendar = google.calendar({ version: "v3", auth: oauth2Client });
   const startToday = new Date();
   const endToday = new Date();
   endToday.setHours(23, 59, 59, 999);
-  Log.log(startToday.toISOString(), endToday.toISOString());
-  const res = await calendar.events.list({
-    calendarId: "primary",
-    timeMin: startToday.toISOString(),
-    timeMax: endToday.toISOString(),
-    singleEvents: true,
-    orderBy: "startTime",
-  });
-  let events = res.data.items;
-  Log.log(events);
+  let reqs = [];
+  for (const cal of calendars.filter((cal) => cal.enabled)) {
+    reqs.push(
+      calendar.events.list({
+        calendarId: cal.id,
+        timeMin: startToday.toISOString(),
+        timeMax: endToday.toISOString(),
+        singleEvents: true,
+        orderBy: "startTime",
+        maxResults: 5,
+      })
+    );
+  }
+  const res = await Promise.all(reqs);
+  let events = res.reduce((acc, { data }) => acc.concat(data.items), []);
+  events.sort(
+    (a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime)
+  );
   return events;
 }
 
-module.exports = { init, isLoggedIn, login, logout, getEvents };
+module.exports = {
+  init,
+  isLoggedIn,
+  obtainToken,
+  logout,
+  getEvents,
+  toggleCalendar,
+  getUserCalendars,
+};

@@ -18,9 +18,6 @@ struct SettingsView: View {
             calendarSettings
         }
         .navigationTitle("Settings")
-        .task {
-            await frameData.getCurrentModulesStatus()
-        }
     }
     
     func handleSignIn() {
@@ -34,75 +31,129 @@ struct SettingsView: View {
     }
     
     @ViewBuilder var moduleList: some View {
-            Section {
-                ForEach(modules,id: \.self) { module in
-                    let hidden = frameData.modulesHidden.contains(module)
-                    HStack {
-                        Text(module.description.capitalized)
-                        Spacer()
+        Section {
+            ForEach(modules,id: \.self) { module in
+                let result = frameData.modulesHidden
+                HStack {
+                    Text(module.description.capitalized)
+                    Spacer()
+                    if let result = result, case .success(let modules) = result {
                         Button {
                             Task {
                                 await frameData.toggleModule(module: module)
                             }
                         } label: {
+                            let hidden = modules.contains(module)
                             Image(systemName: hidden ? "eye.slash" : "eye")
                         }
                         .buttonStyle(.bordered)
-                    }
-                }
-            } header: {
-                HStack {
-                    Text("Modules")
-                    Spacer()
-                    Button {
-                        Task{
-                            await frameData.getCurrentModulesStatus()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.triangle.2.circlepath")
+                    } else {
+                        ProgressView()
+                            .scaledToFit()
                     }
                 }
             }
-            .headerProminence(.increased)
+        } header: {
+            HStack {
+                Text("Modules")
+                Spacer()
+                Button {
+                    Task{
+                        await frameData.getCurrentModulesStatus()
+                    }
+                } label: {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                }
+            }
+        }
+        .headerProminence(.increased)
         
     }
     
     @ViewBuilder var calendarSettings: some View {
         Section {
-            switch frameData.user  {
-            case .loggedIn:
-                Button("Refresh Calendar") {
-                    
+            if case .loggedIn = frameData.user {
+                Group {
+                    Button("Refresh Calendar") {
+                        Task {
+                            await frameData.refreshCalendar()
+                        }
+                    }
                 }
-                Button("Sign out") {
-                    frameData.googleSignOut()
-                }
-            case .Error,.notLoggedIn:
+                
+            } else if case .notLoggedIn = frameData.user {
                 Button(action: {
                     handleSignIn()
                 }, label: {
                     Text("Sign into Google")
                 })
-                
             }
         } header: {
             HStack {
                 Text("Calendar")
                 if case .loggedIn(let user) = frameData.user {
                     Spacer()
-                    Label(user.profile?.email ?? "", systemImage: "person.fill")
+                    HStack {
+                        Image(systemName: "person.fill")
+                            .foregroundColor(.blue)
+                        Text(user.profile?.email ?? "")
+                    }
+                    .font(.subheadline)
                 }
-                
             }
-          
+            
         } footer: {
-            if case .Error(let error) = frameData.user {
+            switch frameData.user {
+                
+            case .Error(let error):
                 Text(error.localizedDescription)
                     .foregroundColor(.red)
+            default:
+                EmptyView()
             }
+            
         }
         .headerProminence(.increased)
-        
+        if case .loggedIn = frameData.user , case .success(let calendars) = frameData.calendars {
+            Section {
+                ForEach(calendars) { cal in
+                    Button {
+                        Task {
+                            await frameData.toggleCalendar(calendarId:cal.id)
+                        }
+                    } label: {
+                        HStack {
+                            Text(cal.summary)
+                            Spacer()
+                            if let enabled = cal.enabled {
+                                if enabled {
+                                    Image(systemName: "checkmark")
+                                }
+                            } else {
+                                ProgressView()
+                            }
+                        }
+                    }
+                }
+                
+            } header: {
+                Text("Calendars")
+            } footer: {
+                if case .loggedIn = frameData.user {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            frameData.googleSignOut()
+                        }, label: {
+                            Text("Sign out")
+                                .font(.subheadline)
+                        })
+                        .foregroundColor(.red)
+                    }
+                }
+            }
+            
+        }
     }
     
 }

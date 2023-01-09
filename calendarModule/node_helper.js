@@ -16,7 +16,7 @@ module.exports = NodeHelper.create({
     this.expressApp.post("/cal/authCode", express.json(), async (req, res) => {
       let { serverAuthCode } = req.body;
       Log.log("login");
-      await googleApi.login(serverAuthCode);
+      await googleApi.obtainToken(serverAuthCode);
       this.getEvents();
       res.end();
     });
@@ -24,8 +24,28 @@ module.exports = NodeHelper.create({
     this.expressApp.get("/cal/logout", async (req, res) => {
       Log.log("logout");
       await googleApi.logout();
+      this.getEvents();
       res.end();
     });
+    this.expressApp.get("/cal/refresh", async (req, res) => {
+      Log.log("refresh");
+      this.getEvents();
+      res.end();
+    });
+    this.expressApp
+      .route("/cal/calendars")
+      .get(async (req, res) => {
+        let cals = await googleApi.getUserCalendars();
+        Log.log("get Calendars", cals);
+        res.json(cals);
+      })
+      .post(express.json(), async (req, res) => {
+        let { calendarId } = req.body;
+        let newCal = await googleApi.toggleCalendar(calendarId);
+        Log.log("post Calendars", newCal);
+        res.json(newCal);
+        this.getEvents();
+      });
 
     this.expressApp
       .route("/hide")
@@ -59,6 +79,7 @@ module.exports = NodeHelper.create({
     return promise;
   },
   socketNotificationReceived: function (notification, payload) {
+    Log.log(notification, payload);
     switch (notification) {
       case "GET_EVENTS":
         this.getEvents();
