@@ -6,6 +6,19 @@ let isCurrentEvent = (event) => {
   return Date.now() >= start && Date.now() <= end;
 };
 
+let divider = (text) => {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("divider");
+  const textWrapper = document.createElement("span");
+  textWrapper.classList.add("text");
+  textWrapper.append(text);
+  const divider = document.createElement("span");
+  divider.classList.add("line");
+  wrapper.append(textWrapper);
+  wrapper.append(divider);
+  return wrapper;
+};
+
 Module.register("calendarModule", {
   events: null,
   refreshTimeout: null,
@@ -20,11 +33,6 @@ Module.register("calendarModule", {
       const allDayEvents = this.events.filter((event) => event.start.date);
       const timedEvents = this.events.filter((event) => event.start.dateTime);
       wrapper.append(this.createAllDayEvents(allDayEvents));
-      if (timedEvents.length > 0 && allDayEvents.length > 0) {
-        let divider = document.createElement("hr");
-        divider.classList.add("divider");
-        wrapper.append(divider);
-      }
       wrapper.append(this.createTimedEvents(timedEvents));
     }
     return wrapper;
@@ -34,13 +42,16 @@ Module.register("calendarModule", {
       return "";
     }
     const wrapper = document.createElement("div");
+    wrapper.append(divider("Upcoming"));
     wrapper.classList.add("timed");
     for (const event of events.slice(0, 4)) {
       const start = new Date(event.start.dateTime);
       const eventWrapper = document.createElement("div");
       eventWrapper.classList.add("event");
       if (isCurrentEvent(event)) {
-        eventWrapper.classList.add("current");
+        setTimeout(() => {
+          eventWrapper.classList.add("current");
+        }, 500);
       }
       const timer = document.createElement("span");
       timer.classList.add("time");
@@ -62,8 +73,8 @@ Module.register("calendarModule", {
     if (events.length < 1) {
       return "";
     }
-
     const wrapper = document.createElement("div");
+    wrapper.append(divider("All Day"));
     wrapper.classList.add("allDay");
     for (const event of events) {
       const eventWrapper = document.createElement("div");
@@ -102,7 +113,7 @@ Module.register("calendarModule", {
     return this.getHiddenModules();
   },
   getHeader() {
-    return "Today's Agenda";
+    return this.events ? "Today's Agenda" : null;
   },
   suspend() {
     console.log("suspend");

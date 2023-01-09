@@ -11,23 +11,34 @@
   font-weight: bold;
 }
 
-.calendarModule .timed .event:not(:first-child) {
+.calendarModule .event:not(:first-child) {
   margin-top: 4px;
 }
 
 .calendarModule .allDay {
-  margin-bottom: 15px;
+  margin-bottom: 0;
 }
 
 .calendarModule .timed .event.current {
   background-color: grey;
+  transition: background-color 0.5s linear;
 }
 
 .calendarModule .divider {
-  height: 1px;
-  border-width: 0;
-  color: gray;
+  display: flex;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  font-size: medium;
+}
+
+.calendarModule .divider .line {
+  height: 2px;
+  flex: 1;
   background-color: gray;
+}
+.calendarModule .divider .text {
+  padding-right: 5px;
 }
 
 .calendarModule .timed .title {
@@ -38,8 +49,10 @@
   padding-right: 10px;
 }
 .calendarModule .module-header {
-  border-bottom: 2px solid var(--color-text-dimmed);
+  border-bottom: none;
   color: whitesmoke;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 :root {
