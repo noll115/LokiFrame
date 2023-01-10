@@ -108,9 +108,18 @@ Module.register("calendarModule", {
       .map((module) => module.name);
   },
   toggleModuleHidden(moduleName) {
-    let module = this.getModules().find((module) => module.name == moduleName);
-    module.hidden ? module.show(1000) : module.hide(1000);
-    return this.getHiddenModules();
+    let p = new Promise((res, rej) => {
+      let module = this.getModules().find(
+        (module) => module.name == moduleName
+      );
+      let cb = () => {
+        res(this.getHiddenModules());
+      };
+      module.hidden ? module.show(1000, cb) : module.hide(1000, cb);
+    });
+    p.then((res) => {
+      this.sendSocketNotification("RECIEVE_MODULES_HIDE", res);
+    });
   },
   getHeader() {
     return this.events ? "Today's Agenda" : null;
@@ -159,10 +168,7 @@ Module.register("calendarModule", {
         );
         break;
       case "TOGGLE_MODULE_HIDE":
-        this.sendSocketNotification(
-          "RECIEVE_MODULES_HIDE",
-          this.toggleModuleHidden(payload)
-        );
+        this.toggleModuleHidden(payload);
         break;
     }
   },

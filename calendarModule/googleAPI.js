@@ -19,7 +19,7 @@ async function getToken() {
     let data = await readFile(tokenPath, "utf-8");
     return JSON.parse(data);
   } catch (err) {}
-  return {};
+  return null;
 }
 
 async function init(path) {
@@ -60,9 +60,12 @@ function isLoggedIn() {
 }
 
 async function logout() {
-  oauth2Client.revokeCredentials();
+  if (!loggedIn) {
+    return;
+  }
   loggedIn = false;
   try {
+    oauth2Client.revokeCredentials();
     await unlink(tokenPath);
     await unlink(calendarsPath);
   } catch (err) {}

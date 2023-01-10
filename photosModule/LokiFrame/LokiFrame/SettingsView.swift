@@ -18,6 +18,9 @@ struct SettingsView: View {
             calendarSettings
         }
         .navigationTitle("Settings")
+        .task {
+            await frameData.getCurrentModulesStatus()
+        }
     }
     
     func handleSignIn() {
@@ -54,19 +57,21 @@ struct SettingsView: View {
                 }
             }
         } header: {
-            HStack {
-                Text("Modules")
-                Spacer()
-                Button {
-                    Task{
-                        await frameData.getCurrentModulesStatus()
+            if case .success = frameData.modulesHidden {
+                HStack {
+                    Text("Modules")
+                    Spacer()
+                    Button {
+                        Task{
+                            await frameData.getCurrentModulesStatus()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
                     }
-                } label: {
-                    Image(systemName: "arrow.triangle.2.circlepath")
                 }
+                .headerProminence(.increased)
             }
         }
-        .headerProminence(.increased)
         
     }
     
@@ -104,7 +109,17 @@ struct SettingsView: View {
             
         } footer: {
             switch frameData.user {
-                
+            case .loggedIn:
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        frameData.googleSignOut()
+                    }, label: {
+                        Text("Sign out")
+                            .font(.subheadline)
+                    })
+                    .foregroundColor(.red)
+                }
             case .Error(let error):
                 Text(error.localizedDescription)
                     .foregroundColor(.red)
@@ -116,6 +131,7 @@ struct SettingsView: View {
         .headerProminence(.increased)
         if case .loggedIn = frameData.user , case .success(let calendars) = frameData.calendars {
             Section {
+                
                 ForEach(calendars) { cal in
                     Button {
                         Task {
@@ -138,21 +154,7 @@ struct SettingsView: View {
                 
             } header: {
                 Text("Calendars")
-            } footer: {
-                if case .loggedIn = frameData.user {
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            frameData.googleSignOut()
-                        }, label: {
-                            Text("Sign out")
-                                .font(.subheadline)
-                        })
-                        .foregroundColor(.red)
-                    }
-                }
             }
-            
         }
     }
     

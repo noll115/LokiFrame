@@ -1,3 +1,7 @@
+.calendarModule {
+  font-size: 25px;
+}
+
 .calendarModule .event {
   background-color: rgba(128, 128, 128, 0.4);
   border-radius: 5px;
@@ -60,11 +64,6 @@
   --gap-body-right: 10px;
   --gap-body-bottom: 10px;
   --gap-body-left: 10px;
-}
-
-body {
-  max-width: 460px;
-  max-height: 800px;
 }
 
 .region.top.right,

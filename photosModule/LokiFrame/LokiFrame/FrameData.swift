@@ -18,16 +18,10 @@ class FrameData: ObservableObject {
     @Published var modulesHidden: Result<[FrameModules],Error>?
     @Published var calendars: Result<[CalendarInfo],Error>?
     let SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
-    let serverPhotosUrl = URL(string: "http://192.168.50.72:8080/photos")!
-    let serverAuthCodeUrl = URL(string: "http://192.168.50.72:8080/cal/authCode")!
-    let serverLogoutUrl = URL(string: "http://192.168.50.72:8080/cal/logout")!
-    let serverRefreshUrl = URL(string: "http://192.168.50.72:8080/cal/refresh")!
-    let serverCalendarsUrl = URL(string: "http://192.168.50.72:8080/cal/calendars")!
-    let serverModuleHide = URL(string: "http://192.168.50.72:8080/hide")!
     
     init(images:[String]) {
         self.imageResult = .success(images.map({ fileName in
-            ImageData(filename: fileName ,imageURL: "\(serverPhotosUrl.absoluteString)/\(fileName)")
+            ImageData(filename: fileName ,imageURL: "\(LokiFrameUrl.photos.url.absoluteString)/\(fileName)")
         }))
     }
     
@@ -40,7 +34,7 @@ class FrameData: ObservableObject {
         print("getting photos")
         imageResult = nil
         do {
-            let (data, _) = try await URLSession.shared.data(from: serverPhotosUrl)
+            let (data, _) = try await URLSession.shared.data(from: LokiFrameUrl.photos.url)
             applyNewImages(data)
         } catch {
             imageResult = .failure(error)
@@ -53,10 +47,9 @@ class FrameData: ObservableObject {
         let deletedPhotos = images.filter {$0.toBeDeleted}.map{$0.filename}
         do {
             guard let jsonData = try? JSONEncoder().encode(deletedPhotos) else {
-                print("Error: Trying to convert model to JSON data")
                 return
             }
-            var req = URLRequest(url: serverPhotosUrl)
+            var req = URLRequest(url: LokiFrameUrl.photos.url)
             req.httpMethod = "DELETE"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.httpBody = jsonData
@@ -88,7 +81,7 @@ class FrameData: ObservableObject {
             return
         }
         do {
-            var req = URLRequest(url: serverPhotosUrl)
+            var req = URLRequest(url: LokiFrameUrl.photos.url)
             req.httpMethod = "POST"
             let boundary = UUID().uuidString
             req.httpMethod = "POST"
@@ -129,7 +122,7 @@ class FrameData: ObservableObject {
     
     private func generateImageDatas(_ filenames:[String]) -> [ImageData] {
         filenames.map { name in
-                .init(filename: name, imageURL: "\(serverPhotosUrl.absoluteString)/\(name)")
+                .init(filename: name, imageURL: "\(LokiFrameUrl.photos.url.absoluteString)/\(name)")
         }
     }
     
@@ -158,8 +151,9 @@ class FrameData: ObservableObject {
             let res = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
             await loginUser(user: res)
         } catch {
+            
             if let err = error as? GIDSignInError {
-                if err.code != .hasNoAuthInKeychain {
+                if err.code == .hasNoAuthInKeychain {
                     return
                 }
             }
@@ -170,7 +164,6 @@ class FrameData: ObservableObject {
     
     func loginUser(user: GIDGoogleUser) async {
         self.user = .loggedIn(user)
-        await getCurrentModulesStatus()
         await getAvailableCalendars()
     }
     
@@ -183,10 +176,11 @@ class FrameData: ObservableObject {
     }
     
     func toggleModule(module: FrameModules) async {
+        self.modulesHidden = nil
         do {
             let body = ["module":module]
             let bodyData = try JSONEncoder().encode(body)
-            var req = URLRequest(url: serverModuleHide)
+            var req = URLRequest(url: LokiFrameUrl.moduleHide.url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.httpBody = bodyData
@@ -200,8 +194,10 @@ class FrameData: ObservableObject {
     }
     
     func getCurrentModulesStatus() async {
+        print("getting modules")
+        self.modulesHidden = nil
         do {
-            let (data,_) = try await URLSession.shared.data(from: serverModuleHide)
+            let (data,_) = try await URLSession.shared.data(from: LokiFrameUrl.moduleHide.url)
             let modules = try JSONDecoder().decode([FrameModules].self, from: data)
             print(modules)
             modulesHidden = .success(modules)
@@ -212,13 +208,13 @@ class FrameData: ObservableObject {
     }
     
     func refreshCalendar() async {
-        let _ = try? await URLSession.shared.data(from: serverRefreshUrl)
+        let _ = try? await URLSession.shared.data(from: LokiFrameUrl.refresh.url)
     }
     
     func getAvailableCalendars() async {
         print("GETTING")
         do {
-            let (data,_) = try await URLSession.shared.data(from: serverCalendarsUrl)
+            let (data,_) = try await URLSession.shared.data(from: LokiFrameUrl.calendars.url)
             let calendars = try JSONDecoder().decode([CalendarInfo].self, from: data)
             self.calendars = .success(calendars)
         } catch {
@@ -231,7 +227,7 @@ class FrameData: ObservableObject {
         guard case .success(var prevCals) = calendars else {
             return
         }
-        guard var index = prevCals.firstIndex(where: {$0.id == calendarId }) else {
+        guard let index = prevCals.firstIndex(where: {$0.id == calendarId }) else {
             return
         }
         prevCals[index].enabled = nil
@@ -240,7 +236,7 @@ class FrameData: ObservableObject {
             let body = ["calendarId": calendarId]
             
             let bodyData = try JSONEncoder().encode(body)
-            var req = URLRequest(url: serverCalendarsUrl)
+            var req = URLRequest(url: LokiFrameUrl.calendars.url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.httpBody = bodyData
@@ -258,7 +254,7 @@ class FrameData: ObservableObject {
         guard let bodyData = try? JSONEncoder().encode(body) else {
             return
         }
-        var req = URLRequest(url: serverAuthCodeUrl)
+        var req = URLRequest(url: LokiFrameUrl.authCode.url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = bodyData
@@ -266,7 +262,7 @@ class FrameData: ObservableObject {
     }
     
     private func signOutServer() async {
-        let _ = try? await URLSession.shared.data(from: serverLogoutUrl)
+        let _ = try? await URLSession.shared.data(from: LokiFrameUrl.logout.url)
     }
     
     
