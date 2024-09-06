@@ -1,0 +1,3 @@
+const weatherIcon = () => {};
+
+export { weatherIcon };
