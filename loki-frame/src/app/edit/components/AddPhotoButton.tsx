@@ -1,52 +1,31 @@
 "use client";
 import { ChangeEventHandler, FC, useContext, useRef, useState } from "react";
 import { MdAddAPhoto } from "react-icons/md";
-import { PhotoContext } from "./PhotoProvider";
-import AddPhotoPortal from "./AddPhotoPortal";
-import imageCompression from "browser-image-compression";
-import { ImageFileData, readImageFile } from "@/utils/readImageFile";
-import { Area } from "react-easy-crop";
+import { useRouter } from "next/navigation";
+import { AddPhotoContext } from "./AddPhotosProvider";
 
-interface PhotoData {
-  file: File;
-  dataUrl: string;
-  crop: Area | null;
-}
+const pause = (ms: number) => {
+  return new Promise((res) => setTimeout(res, ms));
+};
 
 const AddPhotoButton: FC = () => {
-  const { setImages, images } = useContext(PhotoContext);
-  let [imagesToUpload, setImagesToUpload] = useState<PhotoData[]>([]);
+  const { setNewPhotos } = useContext(AddPhotoContext);
   let fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const onFileChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     let files = event.target.files;
     if (files == null) return;
-    let promises: Promise<ImageFileData>[] = [];
+    let photoFiles = [];
     for (let i = 0; i < files.length; i++) {
-      promises.push(
-        imageCompression(files[i], {
-          maxWidthOrHeight: 2000,
-          useWebWorker: true,
-        }).then((file) => readImageFile(file))
-      );
+      photoFiles.push(files[i]);
     }
-    let data = await Promise.all(promises);
-    setImagesToUpload(data.map((imgData) => ({ ...imgData, crop: null })));
-  };
-
-  const submitFiles = async () => {
-    if (imagesToUpload == null) return;
-    let formData = new FormData();
-    for (let i = 0; i < imagesToUpload.length; i++) {
-      formData.append(`files[]`, imagesToUpload[i]);
-    }
-    let resp = await fetch("/api/new", { body: formData, method: "POST" });
-    let newImgs = (await resp.json()) as string[];
-    setImages(newImgs);
-  };
-
-  const onPortalClose = () => {
-    setImagesToUpload([]);
+    setNewPhotos(photoFiles);
+    let editPage = document.querySelector("#edit");
+    editPage?.classList.add("-translate-x-1/4");
+    editPage?.classList.add("opacity-0");
+    await pause(400);
+    router.push("/edit/add");
   };
 
   const onBtnClick = () => {
@@ -55,10 +34,6 @@ const AddPhotoButton: FC = () => {
 
   return (
     <>
-      <AddPhotoPortal
-        imagesToUpload={imagesToUpload}
-        onPortalClose={onPortalClose}
-      />
       <button
         className="btn btn-square rounded-box btn-ghost text-3xl"
         onClick={onBtnClick}
@@ -68,7 +43,7 @@ const AddPhotoButton: FC = () => {
       <input
         type="file"
         multiple
-        accept=".png, .jpg"
+        accept=".png, .jpg, .jpeg"
         className="hidden"
         ref={fileInputRef}
         onChange={onFileChange}
@@ -77,4 +52,4 @@ const AddPhotoButton: FC = () => {
   );
 };
 
-export { AddPhotoButton, type PhotoData };
+export { AddPhotoButton };

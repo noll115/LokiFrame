@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="pastel" className="size-full">
-      <body className={inter.className + " size-full "}>{children}</body>
+      <body className={inter.className + " size-full overflow-hidden"}>
+        {children}
+      </body>
     </html>
   );
 }
