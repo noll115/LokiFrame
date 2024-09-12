@@ -12,4 +12,12 @@ const getImagesNames = async () => {
   return images;
 };
 
-export { getImagesNames, imagePath };
+const getImageTest = async () => {
+  return [
+    "https://picsum.photos/seed/loki/600/1024",
+    "https://picsum.photos/seed/gatito/600/1024",
+    "https://picsum.photos/seed/burrito/600/1024",
+  ];
+};
+
+export { getImagesNames, imagePath, getImageTest };

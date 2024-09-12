@@ -1,6 +1,7 @@
 import { getImagesNames, imagePath } from "@/utils/ImageUtil";
 import { writeFile } from "fs/promises";
 import mime from "mime";
+import sharp from "sharp";
 
 export const POST = async (req: Request) => {
   const formData = await req.formData();

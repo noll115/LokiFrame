@@ -1,13 +1,15 @@
-import { getImagesNames } from "@/utils/ImageUtil";
-import { PictureWall } from "./components/PictureWall";
+import { getImagesNames, getImageTest } from "@/utils/ImageUtil";
+import { ImageBackground } from "./components/ImageBackground/ImageBackgound";
 import { Clock } from "./components/Clock";
+let ip = require("ip");
 
 export default async function Home() {
-  const images = await getImagesNames();
+  const images = await getImageTest();
+  const addr = ip.address();
   return (
-    <main className="size-full p-5">
+    <main className="size-full">
       <div className="relative size-full">
-        <PictureWall images={images} />
+        <ImageBackground images={images} addr={addr} />
         <Clock />
       </div>
     </main>

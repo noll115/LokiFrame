@@ -31,9 +31,10 @@ const Clock = () => {
   }, []);
 
   return (
-    <span className="mix-blend-difference text-white absolute top-0 ">
-      <div className="text-2xl">{dateStr}</div>
-      <div className="text-6xl">{timeStr}</div>
+    <span className=" text-white absolute top-5 left-5 p-4">
+      <div className="bg-black opacity-20 rounded-box size-full absolute top-0 left-0 blur" />
+      <div className="text-2xl relative ">{dateStr}</div>
+      <div className="text-6xl relative ">{timeStr}</div>
     </span>
   );
 };
