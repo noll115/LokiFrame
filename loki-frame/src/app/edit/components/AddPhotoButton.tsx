@@ -4,10 +4,6 @@ import { MdAddAPhoto } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { AddPhotoContext } from "./AddPhotosProvider";
 
-const pause = (ms: number) => {
-  return new Promise((res) => setTimeout(res, ms));
-};
-
 const AddPhotoButton: FC = () => {
   const { setNewPhotos } = useContext(AddPhotoContext);
   let fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,8 +20,7 @@ const AddPhotoButton: FC = () => {
     let editPage = document.querySelector("#edit");
     editPage?.classList.add("-translate-x-1/4");
     editPage?.classList.add("opacity-0");
-    await pause(400);
-    router.push("/edit/add");
+    setTimeout(() => router.push("/edit/add"), 400);
   };
 
   const onBtnClick = () => {

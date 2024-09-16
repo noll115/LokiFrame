@@ -1,76 +1,125 @@
-import { FC, SyntheticEvent, useEffect, useRef, useState } from "react";
-import ImagePreview from "../components/ImagePreview";
+import {
+  CSSProperties,
+  Dispatch,
+  FC,
+  forwardRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Cropper from "react-easy-crop";
-import { PhotoData } from "./page";
+import { ImageContext, PhotoData } from "./page";
 
-interface Props {
-  imagesToUpload: PhotoData[];
-}
+import { AnimatePresence, motion } from "framer-motion";
+import ImageList from "./ImageList";
+import { FaUpload } from "react-icons/fa";
 
 let aspect = 0.59 / 1;
 
-const PhotoEditor: FC<Props> = ({ imagesToUpload }) => {
-  let [selectedImg, setSelectedImg] = useState<PhotoData>(imagesToUpload[0]);
-  let [crop, setCrop] = useState({ x: 0, y: 0 });
-  let [zoom, setZoom] = useState(1);
+const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
+  let [currentIndex, setCurrentIndex] = useState(0);
   let cropContainerRef = useRef<HTMLDivElement>(null);
+  let images = useContext(ImageContext);
 
-  let onImageClick = (newData: PhotoData) => {
-    setSelectedImg(newData);
-    let hasCrop = newData.crop != null;
-    if (hasCrop) {
-      setCrop(newData.crop as { x: number; y: number });
-    } else {
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-    }
+  const onNext = () => {
+    setCurrentIndex(currentIndex + 1);
   };
 
   return (
-    <div className="flex flex-col size-full">
-      <div className="relative basis-3/4" ref={cropContainerRef}>
-        <Cropper
-          image={selectedImg.dataUrl}
-          crop={crop}
-          initialCroppedAreaPercentages={selectedImg.crop ?? undefined}
-          zoom={zoom}
-          aspect={aspect}
-          onCropChange={setCrop}
-          onZoomChange={setZoom}
-          onCropComplete={(area) => {
-            selectedImg.crop = area;
-          }}
-        />
-      </div>
-      <div className="basis-32 flex gap-1 flex-nowrap overflow-x-scroll">
-        {imagesToUpload.map((image) => (
-          <ImageReader
-            key={image.file.name}
-            photoData={image}
-            onClick={selectedImg !== image ? onImageClick : undefined}
+    <>
+      <div className="flex flex-col size-full">
+        <div className="relative basis-3/4" ref={cropContainerRef}>
+          <AnimatePresence mode="popLayout">
+            <ImageCropper
+              key={currentIndex}
+              currentIndex={currentIndex}
+              images={images}
+            />
+          </AnimatePresence>
+        </div>
+        <div className="basis-32 w-full mt-3">
+          <ImageList
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
+            images={images}
           />
-        ))}
+        </div>
       </div>
-    </div>
+      {currentIndex < images.length - 1 ? (
+        <NextPhotoBtn onNext={onNext} />
+      ) : (
+        <UploadBtn images={images} onClose={onClose} />
+      )}
+    </>
   );
 };
 
-interface IDProps {
-  photoData: PhotoData;
-  onClick?: (photoData: PhotoData) => void;
-}
+const ImageCropper = forwardRef<
+  HTMLDivElement,
+  { currentIndex: number; images: PhotoData[] }
+>(({ currentIndex, images }, ref) => {
+  let [crop, setCrop] = useState({ x: 0, y: 0 });
+  let [zoom, setZoom] = useState(1);
+  let currentPhoto = images[currentIndex];
+  return (
+    <motion.div
+      ref={ref}
+      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Cropper
+        image={currentPhoto.dataUrl}
+        crop={crop}
+        initialCroppedAreaPercentages={currentPhoto.crop ?? undefined}
+        zoom={zoom}
+        aspect={aspect}
+        onCropChange={setCrop}
+        onZoomChange={setZoom}
+        onCropComplete={(area) => {
+          currentPhoto.crop = area;
+        }}
+      />
+    </motion.div>
+  );
+});
 
-const ImageReader: FC<IDProps> = ({ photoData, onClick }) => {
-  const onImageClick = () => {
-    onClick?.(photoData);
+const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => {
+  return (
+    <button
+      onClick={onNext}
+      className="btn bg-secondary btn-lg rounded-box text-2xl w-full no-animation"
+    >
+      Next
+    </button>
+  );
+};
+
+const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
+  onClose,
+  images,
+}) => {
+  const submitFiles = async () => {
+    await fetch("/api/new", {
+      body: JSON.stringify(images),
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    onClose();
   };
 
-  let clickable = onClick !== undefined ? "cursor-pointer" : "";
-
   return (
-    <div className={`group ${clickable}`} onClick={onImageClick}>
-      <ImagePreview imageUrl={photoData.dataUrl} />
-    </div>
+    <button
+      onClick={submitFiles}
+      className="btn bg-primary btn-lg rounded-box text-2xl w-full no-animation"
+    >
+      Upload <FaUpload className="text-2xl" />
+    </button>
   );
 };
 

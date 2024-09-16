@@ -1,24 +1,33 @@
 "use client";
 import { Area } from "react-easy-crop";
 import PhotoEditor from "./PhotoEditor";
-import { FC, forwardRef, useContext, useEffect, useState } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { AddPhotoContext } from "../components/AddPhotosProvider";
 import imageCompression from "browser-image-compression";
 import { ImageFileData, readImageFile } from "@/utils/readImageFile";
 import { useRouter } from "next/navigation";
-import { FaUpload } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
-
 interface PhotoData extends ImageFileData {
   crop: Area | null;
 }
+
+const ImageContext = createContext<PhotoData[]>([]);
+
 export default function AddPhotoPage() {
   const [imagesToUpload, setImagesToUpload] = useState<PhotoData[]>([]);
   const { newPhotos } = useContext(AddPhotoContext);
   const router = useRouter();
-
+  console.log(newPhotos);
   useEffect(() => {
+    if (newPhotos.length == 0) {
+      router.push("/edit");
+      return;
+    }
+    let applyImages = true;
+    let addPage = document.querySelector("#add");
+    addPage?.classList.remove("translate-x-1/4");
+    addPage?.classList.remove("opacity-0");
     const compressPhotos = async () => {
       let promises: Promise<ImageFileData>[] = [];
       for (let i = 0; i < newPhotos.length; i++) {
@@ -30,19 +39,21 @@ export default function AddPhotoPage() {
         );
       }
       let data = await Promise.all(promises);
-      setImagesToUpload(data.map((imgData) => ({ ...imgData, crop: null })));
+      if (!applyImages) return;
+      setImagesToUpload(
+        data.map((imgData) => ({
+          ...imgData,
+          crop: null,
+        }))
+      );
     };
     compressPhotos();
+    return () => {
+      applyImages = false;
+    };
   }, [newPhotos]);
 
-  useEffect(() => {
-    let addPage = document.querySelector("#add");
-    addPage?.classList.remove("translate-x-1/4");
-    addPage?.classList.remove("opacity-0");
-  }, []);
-
   if (newPhotos.length == 0) {
-    router.push("/edit");
     return null;
   }
 
@@ -53,62 +64,63 @@ export default function AddPhotoPage() {
     >
       <AnimatePresence initial={false} mode="popLayout">
         {imagesToUpload.length == 0 ? (
-          <AnimHeader key="loading">
+          <motion.div
+            key="load"
+            className="size-full flex flex-col justify-center items-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
             <span className="loading loading-spinner text-primary loading-lg" />
-          </AnimHeader>
+          </motion.div>
         ) : (
-          <AnimHeader key="files">
-            <Mainbody imagesToUpload={imagesToUpload} />
-          </AnimHeader>
+          <motion.div
+            key="main"
+            className="size-full flex flex-col justify-center items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ImageContext.Provider value={imagesToUpload}>
+              <Mainbody />
+            </ImageContext.Provider>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-const AnimHeader = forwardRef<HTMLDivElement, { children: React.ReactNode }>(
-  ({ children }, ref) => {
-    return (
-      <motion.div
-        className="size-full flex flex-col justify-center items-center"
-        ref={ref}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ duration: 0.3 }}
-      >
-        {children}
-      </motion.div>
-    );
-  }
-);
-
-const Mainbody: FC<{ imagesToUpload: PhotoData[] }> = ({ imagesToUpload }) => {
+const Mainbody: FC<{}> = () => {
   const router = useRouter();
-  const submitFiles = async () => {
-    let formData = new FormData();
-    for (let i = 0; i < imagesToUpload.length; i++) {
-      formData.append(`files[]`, imagesToUpload[i]);
-    }
-    let resp = await fetch("/api/new", { body: formData, method: "POST" });
-    let newImgs = (await resp.json()) as string[];
+  const { setNewPhotos } = useContext(AddPhotoContext);
+
+  const closePage = () => {
+    let addPage = document.querySelector("#add");
+    addPage?.classList.add("translate-x-1/4");
+    addPage?.classList.add("opacity-0");
+    setTimeout(() => {
+      setNewPhotos([]);
+      router.back();
+    }, 300);
   };
 
   return (
     <>
       <div className="flex w-full justify-start items-center text-3xl pb-5 gap-4">
-        <IoIosArrowBack onClick={() => router.back()} />
+        <button
+          onClick={closePage}
+          className="btn btn-square rounded-box btn-ghost text-3xl"
+        >
+          <IoIosArrowBack />
+        </button>
         Edit Photos
       </div>
-      <PhotoEditor imagesToUpload={imagesToUpload} />
-      <button
-        onClick={submitFiles}
-        className="btn bg-primary btn-lg rounded-box text-2xl w-full"
-      >
-        Upload <FaUpload className="text-2xl" />
-      </button>
+      <PhotoEditor onClose={closePage} />
     </>
   );
 };
 
-export { type PhotoData };
+export { type PhotoData, ImageContext };

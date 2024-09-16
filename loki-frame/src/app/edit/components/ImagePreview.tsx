@@ -1,25 +1,26 @@
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 interface Props {
   imageUrl: string;
 }
 
 const ImagePreview: FC<Props> = ({ imageUrl }) => {
+  const [show, setShow] = useState(false);
+
+  let opacity = show ? "opacity-100 scale-100" : "opacity-0 scale-90";
+
   return (
-    <div className="size-full relative aspect-[0.59/1] ">
+    <div className={` object-contain transition duration-300 ${opacity}`}>
       <Image
         src={imageUrl}
         alt={imageUrl}
-        fill
+        width={600}
+        height={1024}
         quality={50}
+        onLoad={() => setShow(true)}
         className="object-contain"
-        loading="lazy"
         placeholder="empty"
-        onLoad={(e) => {
-          let img = e.currentTarget;
-          console.log(img.naturalWidth, img.naturalHeight);
-        }}
       />
     </div>
   );
