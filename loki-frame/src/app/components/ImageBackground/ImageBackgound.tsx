@@ -1,5 +1,5 @@
 "use client";
-import { FC, useRef, useState } from "react";
+import { type FC } from "react";
 import { FaCat } from "react-icons/fa";
 import ImageTransition from "./NormalState";
 

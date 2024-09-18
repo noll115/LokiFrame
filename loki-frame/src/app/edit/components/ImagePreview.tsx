@@ -11,7 +11,9 @@ const ImagePreview: FC<Props> = ({ imageUrl }) => {
   let opacity = show ? "opacity-100 scale-100" : "opacity-0 scale-90";
 
   return (
-    <div className={` object-contain transition duration-300 ${opacity}`}>
+    <div
+      className={`select-none object-contain transition duration-300 ${opacity}`}
+    >
       <Image
         src={imageUrl}
         alt={imageUrl}

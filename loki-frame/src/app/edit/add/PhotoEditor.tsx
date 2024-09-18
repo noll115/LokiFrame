@@ -1,19 +1,12 @@
-import {
-  CSSProperties,
-  Dispatch,
-  FC,
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FC, forwardRef, useContext, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
-import { ImageContext, PhotoData } from "./page";
+import { PhotoData } from "./page";
 
 import { AnimatePresence, motion } from "framer-motion";
 import ImageList from "./ImageList";
 import { FaUpload } from "react-icons/fa";
+import { ImageContext } from "./ImageContext";
+import { RevalidateEdit } from "./actions";
 
 let aspect = 0.59 / 1;
 
@@ -58,7 +51,7 @@ const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
 const ImageCropper = forwardRef<
   HTMLDivElement,
   { currentIndex: number; images: PhotoData[] }
->(({ currentIndex, images }, ref) => {
+>(function ImageCropper({ currentIndex, images }, ref) {
   let [crop, setCrop] = useState({ x: 0, y: 0 });
   let [zoom, setZoom] = useState(1);
   let currentPhoto = images[currentIndex];
@@ -102,7 +95,7 @@ const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
   images,
 }) => {
   const submitFiles = async () => {
-    await fetch("/api/new", {
+    await fetch("/api/edit", {
       body: JSON.stringify(images),
       method: "POST",
       headers: {
@@ -110,6 +103,7 @@ const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
         "Content-Type": "application/json",
       },
     });
+    await RevalidateEdit();
     onClose();
   };
 

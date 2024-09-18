@@ -1,5 +1,7 @@
 import { PhotoData } from "@/app/edit/add/page";
-import { imagePath } from "@/utils/ImageUtil";
+import { deleteImg, getImagesNames, imagePath } from "@/utils/ImageUtil";
+import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
 import path from "path";
 import sharp, { AvailableFormatInfo, OutputInfo, Region } from "sharp";
 
@@ -35,10 +37,15 @@ export const POST = async (req: Request) => {
     waitingFiles.push(
       s
         .extract(cropRegion)
-        // .resize({width:SCREEN_WIDTH,height:SCREEN_HEIGHT,fit:"inside"})
         .toFile(path.join(imagePath, name + Date.now() + "." + type))
     );
   }
   await Promise.all(waitingFiles);
   return new Response(null, { status: 200 });
+};
+
+export const DELETE = async (req: Request) => {
+  let imgs = (await req.json()) as string[];
+  await Promise.all(imgs.map((imgUrl) => deleteImg(imgUrl.substring(5))));
+  return NextResponse.json(await getImagesNames());
 };

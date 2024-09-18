@@ -1,24 +1,23 @@
 "use client";
 import { Area } from "react-easy-crop";
 import PhotoEditor from "./PhotoEditor";
-import { createContext, FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { AddPhotoContext } from "../components/AddPhotosProvider";
 import imageCompression from "browser-image-compression";
 import { ImageFileData, readImageFile } from "@/utils/readImageFile";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
+import { ImageProvider } from "./ImageContext";
+
 interface PhotoData extends ImageFileData {
   crop: Area | null;
 }
-
-const ImageContext = createContext<PhotoData[]>([]);
 
 export default function AddPhotoPage() {
   const [imagesToUpload, setImagesToUpload] = useState<PhotoData[]>([]);
   const { newPhotos } = useContext(AddPhotoContext);
   const router = useRouter();
-  console.log(newPhotos);
   useEffect(() => {
     if (newPhotos.length == 0) {
       router.push("/edit");
@@ -51,7 +50,7 @@ export default function AddPhotoPage() {
     return () => {
       applyImages = false;
     };
-  }, [newPhotos]);
+  }, [newPhotos, router]);
 
   if (newPhotos.length == 0) {
     return null;
@@ -83,9 +82,9 @@ export default function AddPhotoPage() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <ImageContext.Provider value={imagesToUpload}>
+            <ImageProvider images={imagesToUpload}>
               <Mainbody />
-            </ImageContext.Provider>
+            </ImageProvider>
           </motion.div>
         )}
       </AnimatePresence>
@@ -103,7 +102,7 @@ const Mainbody: FC<{}> = () => {
     addPage?.classList.add("opacity-0");
     setTimeout(() => {
       setNewPhotos([]);
-      router.back();
+      router.replace("/edit");
     }, 300);
   };
 
@@ -123,4 +122,4 @@ const Mainbody: FC<{}> = () => {
   );
 };
 
-export { type PhotoData, ImageContext };
+export { type PhotoData };

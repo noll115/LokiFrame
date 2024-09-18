@@ -29,6 +29,7 @@ const ImageDisplay: FC<Props> = ({
   return (
     <Image
       animate={{ opacity }}
+      style={{ height: SCREEN_HEIGHT }}
       transition={{ duration: 3 }}
       exit={{ opacity: 0 }}
       onAnimationComplete={onImageTransitionEnd}

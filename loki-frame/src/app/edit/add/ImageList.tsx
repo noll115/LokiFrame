@@ -6,7 +6,6 @@ import {
   Dispatch,
   FC,
   forwardRef,
-  useContext,
   useEffect,
   useState,
 } from "react";
@@ -32,7 +31,7 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
     if (currentIndex > furthest) {
       setFurthest(currentIndex);
     }
-  }, [currentIndex <= furthest]);
+  }, [currentIndex, furthest]);
 
   if (!showPhotos) {
     return null;
@@ -87,7 +86,10 @@ const ImageSelect: FC<ImageSelectProps> = ({ style, index, data }) => {
   );
 };
 
-const innerElementType = forwardRef<any, any>(({ style, ...rest }, ref) => {
+const innerElementType = forwardRef<any, any>(function InnerElementType(
+  { style, ...rest },
+  ref
+) {
   return (
     <div
       ref={ref}

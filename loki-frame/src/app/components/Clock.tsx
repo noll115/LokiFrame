@@ -31,8 +31,7 @@ const Clock = () => {
   }, []);
 
   return (
-    <span className=" text-white absolute top-5 left-5 p-4">
-      <div className="bg-black opacity-20 rounded-box size-full absolute top-0 left-0 blur" />
+    <span className=" text-white absolute top-5 left-5 p-4 backdrop-blur-md rounded-box shadow-md">
       <div className="text-2xl relative ">{dateStr}</div>
       <div className="text-6xl relative ">{timeStr}</div>
     </span>
