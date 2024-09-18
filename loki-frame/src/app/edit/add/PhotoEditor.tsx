@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import ImageList from "./ImageList";
 import { FaUpload } from "react-icons/fa";
 import { ImageContext } from "./ImageContext";
-import { RevalidateEdit } from "./actions";
 
 let aspect = 0.59 / 1;
 
@@ -103,7 +102,6 @@ const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
         "Content-Type": "application/json",
       },
     });
-    await RevalidateEdit();
     onClose();
   };
 

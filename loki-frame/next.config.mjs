@@ -5,6 +5,11 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    staleTimes: {
+      dynamic: 0,
+    },
+  },
   images: {
     remotePatterns: [
       {

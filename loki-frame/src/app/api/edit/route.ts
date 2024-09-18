@@ -41,6 +41,7 @@ export const POST = async (req: Request) => {
     );
   }
   await Promise.all(waitingFiles);
+
   return new Response(null, { status: 200 });
 };
 
