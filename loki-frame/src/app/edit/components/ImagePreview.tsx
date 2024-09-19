@@ -12,7 +12,7 @@ const ImagePreview: FC<Props> = ({ imageUrl }) => {
 
   return (
     <div
-      className={`select-none object-contain transition duration-300 ${opacity}`}
+      className={`select-none object-contain transition duration-300 rounded-md overflow-hidden ${opacity}`}
     >
       <Image
         src={imageUrl}

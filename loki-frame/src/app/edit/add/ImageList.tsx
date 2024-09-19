@@ -7,7 +7,9 @@ import {
   FC,
   forwardRef,
   useEffect,
+  useRef,
   useState,
+  useTransition,
 } from "react";
 import { PhotoData } from "./page";
 
@@ -22,14 +24,19 @@ interface Props {
 const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
   let [showPhotos, setShowPhotos] = useState(false);
   let [furthest, setFurthest] = useState(0);
+  let listRef = useRef<List>(null);
 
   useEffect(() => {
     setTimeout(() => setShowPhotos(true), 300);
   }, []);
 
   useEffect(() => {
+    let list = listRef.current
     if (currentIndex > furthest) {
       setFurthest(currentIndex);
+      return () => {
+        list?.scrollToItem(currentIndex + 1, "end");
+      }
     }
   }, [currentIndex, furthest]);
 
@@ -37,7 +44,7 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
     return null;
   }
   return (
-    <AutoSizer className="size-full">
+    <AutoSizer>
       {({ height, width }) => (
         <List
           itemCount={furthest + 1}
@@ -45,11 +52,13 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
           itemSize={width / 3.9}
           height={height}
           width={width}
+
           itemData={{
             setCurrentIndex,
             currentIndex,
             images,
           }}
+          ref={listRef}
           layout="horizontal"
         >
           {ImageSelect}

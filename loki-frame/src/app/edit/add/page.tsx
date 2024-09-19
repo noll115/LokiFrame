@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
 import { ImageProvider } from "./ImageContext";
+import { Header } from "@/app/components/Header";
 
 interface PhotoData extends ImageFileData {
   crop: Area | null;
@@ -106,17 +107,16 @@ const Mainbody: FC<{}> = () => {
     }, 300);
   };
 
+  let backBtn = <button
+    onClick={closePage}
+    className="btn btn-square rounded-box btn-ghost text-3xl"
+  >
+    <IoIosArrowBack />
+  </button>
+
   return (
     <>
-      <div className="flex w-full justify-start items-center text-3xl pb-5 gap-4">
-        <button
-          onClick={closePage}
-          className="btn btn-square rounded-box btn-ghost text-3xl"
-        >
-          <IoIosArrowBack />
-        </button>
-        Edit Photos
-      </div>
+      <Header icon={backBtn} title="Edit Photos" />
       <PhotoEditor onClose={closePage} />
     </>
   );
