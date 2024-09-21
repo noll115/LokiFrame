@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 interface ImageFileData {
   file: File;
   dataUrl: string;
+  fileName: string;
 }
 
-const readImageFile = (file: File) => {
+const readImageFile = (file: File, fileName: string) => {
   return new Promise<ImageFileData>((res, rej) => {
     let reader = new FileReader();
     reader.onload = () => {
       if (reader.result) {
-        res({ file, dataUrl: reader.result as string });
+        res({ file, fileName, dataUrl: reader.result as string });
       }
     };
     reader.onerror = () => {

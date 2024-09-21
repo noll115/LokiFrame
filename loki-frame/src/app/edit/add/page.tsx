@@ -10,7 +10,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
 import { ImageProvider } from "./ImageContext";
 import { Header } from "@/app/components/Header";
-
 interface PhotoData extends ImageFileData {
   crop: Area | null;
 }
@@ -19,15 +18,18 @@ export default function AddPhotoPage() {
   const [imagesToUpload, setImagesToUpload] = useState<PhotoData[]>([]);
   const { newPhotos } = useContext(AddPhotoContext);
   const router = useRouter();
+
   useEffect(() => {
     if (newPhotos.length == 0) {
       router.push("/edit");
       return;
     }
+
     let applyImages = true;
     let addPage = document.querySelector("#add");
     addPage?.classList.remove("translate-x-1/4");
     addPage?.classList.remove("opacity-0");
+
     const compressPhotos = async () => {
       let promises: Promise<ImageFileData>[] = [];
       for (let i = 0; i < newPhotos.length; i++) {
@@ -35,11 +37,13 @@ export default function AddPhotoPage() {
           imageCompression(newPhotos[i], {
             maxWidthOrHeight: 2000,
             useWebWorker: true,
-          }).then((file) => readImageFile(file))
+            preserveExif: true,
+          }).then((file) => readImageFile(file, newPhotos[i].name))
         );
       }
       let data = await Promise.all(promises);
       if (!applyImages) return;
+
       setImagesToUpload(
         data.map((imgData) => ({
           ...imgData,
@@ -60,9 +64,12 @@ export default function AddPhotoPage() {
   return (
     <div
       id="add"
-      className="transition duration-300 ease-in-out opacity-0 translate-x-1/4 size-full flex items-center justify-center flex-col"
+      className="transition pb-4 sm:p-6 duration-300 ease-in-out opacity-0 translate-x-1/4 size-full flex items-center justify-center flex-col"
     >
-      <AnimatePresence initial={false} mode="popLayout">
+      <AnimatePresence
+        initial={false}
+        mode="popLayout"
+      >
         {imagesToUpload.length == 0 ? (
           <motion.div
             key="load"
@@ -93,7 +100,7 @@ export default function AddPhotoPage() {
   );
 }
 
-const Mainbody: FC<{}> = () => {
+const Mainbody = () => {
   const router = useRouter();
   const { setNewPhotos } = useContext(AddPhotoContext);
 
@@ -107,16 +114,21 @@ const Mainbody: FC<{}> = () => {
     }, 300);
   };
 
-  let backBtn = <button
-    onClick={closePage}
-    className="btn btn-square rounded-box btn-ghost text-3xl"
-  >
-    <IoIosArrowBack />
-  </button>
+  let backBtn = (
+    <button
+      onClick={closePage}
+      className="btn btn-square rounded-box  btn-ghost  text-4xl"
+    >
+      <IoIosArrowBack />
+    </button>
+  );
 
   return (
     <>
-      <Header icon={backBtn} title="Edit Photos" />
+      <Header
+        icon={backBtn}
+        title="Edit Photos"
+      />
       <PhotoEditor onClose={closePage} />
     </>
   );

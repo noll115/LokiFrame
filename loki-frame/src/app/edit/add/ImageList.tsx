@@ -1,6 +1,6 @@
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import ImagePreview from "../components/ImagePreview";
+import ImageDisplay from "../components/ImageDisplay";
 import {
   CSSProperties,
   Dispatch,
@@ -31,28 +31,27 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
   }, []);
 
   useEffect(() => {
-    let list = listRef.current
+    let list = listRef.current;
     if (currentIndex > furthest) {
       setFurthest(currentIndex);
-      return () => {
-        list?.scrollToItem(currentIndex + 1, "end");
-      }
+    } else if (currentIndex === furthest) {
+      list?.scrollToItem(currentIndex + 1, "end");
     }
   }, [currentIndex, furthest]);
 
   if (!showPhotos) {
     return null;
   }
+
   return (
     <AutoSizer>
       {({ height, width }) => (
         <List
           itemCount={furthest + 1}
           innerElementType={innerElementType}
-          itemSize={width / 3.9}
+          itemSize={width / 5 + 4}
           height={height}
           width={width}
-
           itemData={{
             setCurrentIndex,
             currentIndex,
@@ -129,7 +128,7 @@ const ImageSelector: FC<IDProps> = ({
 
   return (
     <div
-      className="flex justify-center items-center"
+      className="flex justify-center items-center overflow-hidden rounded-md"
       style={{
         ...style,
         left: style.left + PADDING_SIZE,
@@ -137,7 +136,7 @@ const ImageSelector: FC<IDProps> = ({
       }}
       onClick={!selected ? onImageClick : undefined}
     >
-      <ImagePreview imageUrl={photoData.dataUrl} />
+      <ImageDisplay dataUrl={photoData.dataUrl} />
     </div>
   );
 };

@@ -21,7 +21,10 @@ const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
     <>
       <div className="flex flex-col size-full">
-        <div className="relative basis-3/4" ref={cropContainerRef}>
+        <div
+          className="relative basis-3/4"
+          ref={cropContainerRef}
+        >
           <AnimatePresence mode="popLayout">
             <ImageCropper
               key={currentIndex}
@@ -41,7 +44,10 @@ const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
       {currentIndex < images.length - 1 ? (
         <NextPhotoBtn onNext={onNext} />
       ) : (
-        <UploadBtn images={images} onClose={onClose} />
+        <UploadBtn
+          images={images}
+          onClose={onClose}
+        />
       )}
     </>
   );
@@ -78,21 +84,19 @@ const ImageCropper = forwardRef<
   );
 });
 
-const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => {
-  return (
-    <button
-      onClick={onNext}
-      className="btn bg-secondary btn-lg rounded-box text-2xl w-full no-animation"
-    >
-      Next
-    </button>
-  );
-};
-
-const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
-  onClose,
-  images,
-}) => {
+const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => (
+  <BottomBtn
+    onClick={onNext}
+    className="bg-secondary"
+  >
+    Next
+  </BottomBtn>
+);
+interface UploadProps {
+  onClose: () => void;
+  images: PhotoData[];
+}
+const UploadBtn = ({ onClose, images }: UploadProps) => {
   const submitFiles = async () => {
     await fetch("/api/edit", {
       body: JSON.stringify(images),
@@ -106,13 +110,26 @@ const UploadBtn: FC<{ onClose: () => void; images: PhotoData[] }> = ({
   };
 
   return (
-    <button
+    <BottomBtn
       onClick={submitFiles}
-      className="btn bg-primary btn-lg rounded-box text-2xl w-full no-animation"
+      className="bg-primary"
     >
       Upload <FaUpload className="text-2xl" />
-    </button>
+    </BottomBtn>
   );
 };
+interface BottomBtnProps {
+  children: React.ReactNode;
+  className: string;
+  onClick: () => void;
+}
+const BottomBtn: FC<BottomBtnProps> = ({ children, onClick, className }) => (
+  <button
+    onClick={onClick}
+    className={`btn btn-lg rounded-box text-2xl w-full  ${className}`}
+  >
+    {children}
+  </button>
+);
 
 export default PhotoEditor;

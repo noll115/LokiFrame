@@ -2,21 +2,22 @@ import Image from "next/image";
 import { FC, useState } from "react";
 
 interface Props {
-  imageUrl: string;
+  fileName?: string;
+  dataUrl?: string;
 }
 
-const ImagePreview: FC<Props> = ({ imageUrl }) => {
+const ImageDisplay: FC<Props> = ({ fileName, dataUrl }) => {
   const [show, setShow] = useState(false);
 
   let opacity = show ? "opacity-100 scale-100" : "opacity-0 scale-90";
-
+  let finalUrl = dataUrl ?? "/api/" + fileName;
   return (
     <div
-      className={`select-none object-contain transition duration-300 rounded-md overflow-hidden ${opacity}`}
+      className={`select-none transition duration-300 rounded-md overflow-hidden ${opacity}`}
     >
       <Image
-        src={imageUrl}
-        alt={imageUrl}
+        src={finalUrl}
+        alt={finalUrl}
         width={600}
         height={1024}
         quality={50}
@@ -28,4 +29,4 @@ const ImagePreview: FC<Props> = ({ imageUrl }) => {
   );
 };
 
-export default ImagePreview;
+export default ImageDisplay;
