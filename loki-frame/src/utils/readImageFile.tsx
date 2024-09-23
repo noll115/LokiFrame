@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 interface ImageFileData {
   file: File;
   dataUrl: string;

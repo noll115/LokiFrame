@@ -20,5 +20,7 @@ model Image {
 
 model Config {
   id Int @id @default(0)
-  clock Boolean @default(true)
+  clockOn Boolean @default(true)
+  lastUpdatedConfig DateTime @default(now()) 
+  lastUpdatedImages DateTime @default(now())
 }

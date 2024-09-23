@@ -1,4 +1,4 @@
-import { getImagesNames } from "@/utils/ImageUtil";
+import { getImageData } from "@/utils/dbUtils";
 import { AddPhotoButton } from "./components/AddPhotoButton";
 import ImageGrid from "./components/ImageGrid/ImageGrid";
 import { headers } from "next/headers";
@@ -7,7 +7,7 @@ import { CatIcon } from "./components/CatIcon";
 import * as motion from "framer-motion/client";
 
 export default async function EditPage() {
-  const images = await getImagesNames();
+  const images = await getImageData();
   const userAgent = headers().get("user-agent") || "";
   const isMobile = /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
   return (

@@ -1,4 +1,4 @@
-import { imagePath } from "@/utils/ImageUtil";
+import { imagePath } from "@/utils/dbUtils";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";

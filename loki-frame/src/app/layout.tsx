@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ weight: ["400", "500", "700"], subsets: ["latin"] });
@@ -16,7 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="pastel" className="size-full">
+    <html
+      lang="en"
+      data-theme="pastel"
+      className="size-full"
+    >
       <body className={inter.className + " size-full overflow-hidden"}>
         {children}
       </body>

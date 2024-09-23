@@ -1,5 +1,5 @@
 import { PhotoData } from "@/app/edit/add/page";
-import { addImg, deleteImg, getImagesNames } from "@/utils/ImageUtil";
+import { addImg, deleteImg, getImageData } from "@/utils/dbUtils";
 import { NextResponse } from "next/server";
 import { OutputInfo } from "sharp";
 
@@ -20,5 +20,5 @@ export const POST = async (req: Request) => {
 export const DELETE = async (req: Request) => {
   let ids = (await req.json()) as string[];
   await Promise.all(ids.map((id) => deleteImg(id)));
-  return NextResponse.json(await getImagesNames());
+  return NextResponse.json(await getImageData());
 };

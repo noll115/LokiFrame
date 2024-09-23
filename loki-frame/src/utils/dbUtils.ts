@@ -4,22 +4,23 @@ import fsp from "fs/promises";
 import { PhotoData } from "@/app/edit/add/page";
 import sharp from "sharp";
 import exifReader from "exif-reader";
-import { PrismaClient } from "@prisma/client";
+import { Config, Image, PrismaClient } from "@prisma/client";
 
 const imagePath = path.join(process.cwd(), "photos");
+const prisma = new PrismaClient();
 
-const getImagesNames = async () => {
-  const prisma = new PrismaClient();
+const getImageData = async () => {
   if (!fs.existsSync(imagePath)) {
     await fsp.mkdir(imagePath);
   }
   return await prisma.image.findMany();
 };
 
-type GPSData = {
+type GPSData = null | {
   long: number;
   lat: number;
 };
+
 const addImg = async (photoData: PhotoData) => {
   let crop = photoData.crop;
   let url = photoData.dataUrl.split(";base64,").pop()!;
@@ -27,7 +28,7 @@ const addImg = async (photoData: PhotoData) => {
   let s = sharp(buffer);
 
   let { width, height, exif } = await s.metadata();
-  let gpsData: GPSData | null = null;
+  let gpsData: GPSData = null;
   if (exif) {
     let { GPSInfo } = exifReader(exif);
     if (GPSInfo) {
@@ -59,7 +60,6 @@ const addImg = async (photoData: PhotoData) => {
     .extract(cropRegion)
     .resize({ width: 700, height: 1024, fit: "inside" })
     .toFile(filePath);
-  const prisma = new PrismaClient();
   await prisma.image.create({
     data: {
       fileName,
@@ -67,6 +67,7 @@ const addImg = async (photoData: PhotoData) => {
       long: gpsData?.long,
     },
   });
+  await UpdateConfig({ lastUpdatedImages: new Date() });
   return output;
 };
 
@@ -79,17 +80,22 @@ const dms2dd = ([degrees, minutes, seconds]: number[], direction: string) => {
 };
 
 const deleteImg = async (id: string) => {
-  const prisma = new PrismaClient();
   let deletedImg = await prisma.image.delete({ where: { id } });
+  await UpdateConfig({ lastUpdatedImages: new Date() });
   return await fsp.rm(path.join(imagePath, deletedImg.fileName));
 };
 
-const getImageTest = async () => {
-  return [
-    "https://picsum.photos/seed/loki/600/1024",
-    "https://picsum.photos/seed/gatito/600/1024",
-    "https://picsum.photos/seed/burrito/600/1024",
-  ];
+const getConfig = async () => {
+  let config = await prisma.config.upsert({
+    where: { id: 0 },
+    create: {},
+    update: {},
+  });
+  return config;
 };
 
-export { getImagesNames, imagePath, getImageTest, deleteImg, addImg };
+const UpdateConfig = async (data: Partial<Config>) => {
+  await prisma.config.update({ where: { id: 0 }, data });
+};
+
+export { getImageData, imagePath, deleteImg, addImg, getConfig, UpdateConfig };

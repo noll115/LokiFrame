@@ -1,20 +1,25 @@
-import { type FC } from "react";
+"use client";
+import { useContext, type FC } from "react";
 import ImageTransition from "./NormalState";
-import { Image } from "@prisma/client";
 import { ConnectModal } from "./ConnentModal";
+import { ImagesContext } from "../ImagesContext";
 
 interface Props {
-  images: Image[];
   addr: string;
 }
 
-const ImageBackground: FC<Props> = ({ images, addr }) => {
+const ImageBackground: FC<Props> = ({ addr }) => {
+  const { images, config } = useContext(ImagesContext);
+
   if (images.length == 0) {
     return <ConnectModal addr={addr} />;
   }
   return (
     <div className="size-full">
-      <ImageTransition images={images} />
+      <ImageTransition
+        key={images.length}
+        images={images}
+      />
     </div>
   );
 };
