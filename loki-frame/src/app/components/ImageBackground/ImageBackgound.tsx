@@ -1,23 +1,16 @@
-"use client";
 import { type FC } from "react";
-import { FaCat } from "react-icons/fa";
 import ImageTransition from "./NormalState";
+import { Image } from "@prisma/client";
+import { ConnectModal } from "./ConnentModal";
 
 interface Props {
-  images: string[];
+  images: Image[];
   addr: string;
 }
 
 const ImageBackground: FC<Props> = ({ images, addr }) => {
   if (images.length == 0) {
-    return (
-      <div className="size-full modal-backdrop flex justify-center items-center">
-        <div className="bg-primary text-primary-content modal-box flex flex-col text-2xl justify-center items-center">
-          <FaCat className="text-5xl mb-3" />
-          Connect to <b>{addr}/edit</b>
-        </div>
-      </div>
-    );
+    return <ConnectModal addr={addr} />;
   }
   return (
     <div className="size-full">

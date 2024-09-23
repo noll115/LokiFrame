@@ -1,4 +1,4 @@
-import { FC, forwardRef, useContext, useRef, useState } from "react";
+import { Dispatch, FC, forwardRef, useContext, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { PhotoData } from "./page";
 
@@ -8,8 +8,11 @@ import { FaUpload } from "react-icons/fa";
 import { ImageContext } from "./ImageContext";
 
 let aspect = 0.59 / 1;
-
-const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
+interface Props {
+  onClose: () => void;
+  setLoading: Dispatch<boolean>;
+}
+const PhotoEditor = ({ onClose, setLoading }: Props) => {
   let [currentIndex, setCurrentIndex] = useState(0);
   let cropContainerRef = useRef<HTMLDivElement>(null);
   let images = useContext(ImageContext);
@@ -45,6 +48,7 @@ const PhotoEditor: FC<{ onClose: () => void }> = ({ onClose }) => {
         <NextPhotoBtn onNext={onNext} />
       ) : (
         <UploadBtn
+          setLoading={setLoading}
           images={images}
           onClose={onClose}
         />
@@ -95,9 +99,11 @@ const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => (
 interface UploadProps {
   onClose: () => void;
   images: PhotoData[];
+  setLoading: Dispatch<boolean>;
 }
-const UploadBtn = ({ onClose, images }: UploadProps) => {
+const UploadBtn = ({ onClose, images, setLoading }: UploadProps) => {
   const submitFiles = async () => {
+    setLoading(true);
     await fetch("/api/edit", {
       body: JSON.stringify(images),
       method: "POST",

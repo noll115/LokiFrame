@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.8.12",
     "@prisma/client": "^5.19.1",
     "browser-image-compression": "^2.0.2",
     "exif-reader": "^2.0.1",

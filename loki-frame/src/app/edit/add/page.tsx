@@ -1,7 +1,7 @@
 "use client";
 import { Area } from "react-easy-crop";
 import PhotoEditor from "./PhotoEditor";
-import { FC, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AddPhotoContext } from "../components/AddPhotosProvider";
 import imageCompression from "browser-image-compression";
 import { ImageFileData, readImageFile } from "@/utils/readImageFile";
@@ -10,6 +10,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
 import { ImageProvider } from "./ImageContext";
 import { Header } from "@/app/components/Header";
+import LoadingBg from "./LoadingBg";
+
 interface PhotoData extends ImageFileData {
   crop: Area | null;
 }
@@ -71,16 +73,7 @@ export default function AddPhotoPage() {
         mode="popLayout"
       >
         {imagesToUpload.length == 0 ? (
-          <motion.div
-            key="load"
-            className="size-full flex flex-col justify-center items-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-          >
-            <span className="loading loading-spinner text-primary loading-lg" />
-          </motion.div>
+          <LoadingBg key="load" />
         ) : (
           <motion.div
             key="main"
@@ -103,6 +96,7 @@ export default function AddPhotoPage() {
 const Mainbody = () => {
   const router = useRouter();
   const { setNewPhotos } = useContext(AddPhotoContext);
+  let [loading, setLoading] = useState(false);
 
   const closePage = () => {
     let addPage = document.querySelector("#add");
@@ -123,13 +117,20 @@ const Mainbody = () => {
     </button>
   );
 
+  if (loading) {
+    return <LoadingBg />;
+  }
+
   return (
     <>
       <Header
         icon={backBtn}
         title="Edit Photos"
       />
-      <PhotoEditor onClose={closePage} />
+      <PhotoEditor
+        setLoading={setLoading}
+        onClose={closePage}
+      />
     </>
   );
 };

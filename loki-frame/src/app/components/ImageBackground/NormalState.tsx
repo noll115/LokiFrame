@@ -1,7 +1,9 @@
+"use client";
 import { FC, useEffect, useRef, useState } from "react";
-import { Image } from "./types";
 import ImageDisplay from "./ImageDisplay";
 import { AnimatePresence } from "framer-motion";
+import { Image } from "@prisma/client";
+import { BackgroundImage } from "./types";
 
 let timePerPictureMS = 15 * 1000;
 
@@ -10,11 +12,12 @@ const getNextImageIndex = (arr: any[], currIndex: number) => {
 };
 
 interface Props {
-  images: string[];
+  images: Image[];
 }
+
 const ImageTransition: FC<Props> = ({ images }) => {
   let timeOutRef = useRef<NodeJS.Timeout | null>(null);
-  const [imagesArr, setImagesArr] = useState<Image[]>([
+  const [imagesArr, setImagesArr] = useState<BackgroundImage[]>([
     { image: images[0], index: 0, loaded: true, transitioned: false },
     {
       image: images[getNextImageIndex(images, 0)],
@@ -34,6 +37,7 @@ const ImageTransition: FC<Props> = ({ images }) => {
 
   const switchPics = () => {
     imagesArr.shift();
+
     let currImage = imagesArr[0];
     let nextIndex = getNextImageIndex(images, currImage.index);
     setImagesArr([
@@ -56,12 +60,12 @@ const ImageTransition: FC<Props> = ({ images }) => {
     }
   };
 
-  const onPictureLoad = async (image: Image) => {
+  const onPictureLoad = async (image: BackgroundImage) => {
     image.loaded = true;
     startTimeout();
   };
 
-  const onPictureTransitioned = async (image: Image) => {
+  const onPictureTransitioned = async (image: BackgroundImage) => {
     if (image.transitioned) return;
     image.transitioned = true;
     startTimeout();
@@ -69,12 +73,12 @@ const ImageTransition: FC<Props> = ({ images }) => {
 
   return (
     <AnimatePresence>
-      {imagesArr.map((image, i) => {
+      {imagesArr.map((bgImage, i) => {
         let opacity = i == 0 ? 1 : 0;
         return (
           <ImageDisplay
-            key={image.image}
-            image={image}
+            key={bgImage.image.fileName + i}
+            bgImage={bgImage}
             opacity={opacity}
             onPictureLoad={onPictureLoad}
             onTransitionEnd={i == 0 ? onPictureTransitioned : undefined}

@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs";
 import fsp from "fs/promises";
 import { PhotoData } from "@/app/edit/add/page";
-import sharp, { AvailableFormatInfo } from "sharp";
-import exifReader, { Exif } from "exif-reader";
+import sharp from "sharp";
+import exifReader from "exif-reader";
 import { PrismaClient } from "@prisma/client";
 
 const imagePath = path.join(process.cwd(), "photos");
@@ -55,7 +55,10 @@ const addImg = async (photoData: PhotoData) => {
   );
   let fileName = name + currentTime + "." + type;
   let filePath = path.join(imagePath, fileName);
-  let output = await s.extract(cropRegion).toFile(filePath);
+  let output = await s
+    .extract(cropRegion)
+    .resize({ width: 700, height: 1024, fit: "inside" })
+    .toFile(filePath);
   const prisma = new PrismaClient();
   await prisma.image.create({
     data: {

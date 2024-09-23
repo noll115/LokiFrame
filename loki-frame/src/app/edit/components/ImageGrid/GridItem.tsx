@@ -1,7 +1,7 @@
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import ImageDisplay from "../ImageDisplay";
 import { TbTrash } from "react-icons/tb";
-import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Image } from "@prisma/client";
 
 interface Props {
