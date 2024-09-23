@@ -72,7 +72,7 @@ export default function AddPhotoPage() {
         initial={false}
         mode="popLayout"
       >
-        {imagesToUpload.length >= 0 ? (
+        {imagesToUpload.length == 0 ? (
           <LoadingBg key="load" />
         ) : (
           <motion.div
