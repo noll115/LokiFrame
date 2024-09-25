@@ -15,7 +15,7 @@ const LoadingBg = forwardRef<HTMLDivElement>(function Loading({}, ref) {
       <span className="relative">
         <div className="loading loading-spinner loading-lg "></div>
         <DotLottieReact
-          className="absolute w-[70vh] -left-[60vw] top-[0] aspect-video transition-opacity "
+          className="absolute -left-[15vh] top-full w-[40vh]"
           data={catLoad}
           loop
           autoplay

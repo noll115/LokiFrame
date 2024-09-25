@@ -25,7 +25,6 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
   let [showPhotos, setShowPhotos] = useState(false);
   let [furthest, setFurthest] = useState(0);
   let listRef = useRef<List>(null);
-
   useEffect(() => {
     setTimeout(() => setShowPhotos(true), 300);
   }, []);
@@ -45,24 +44,26 @@ const ImageList: FC<Props> = ({ currentIndex, setCurrentIndex, images }) => {
 
   return (
     <AutoSizer>
-      {({ height, width }) => (
-        <List
-          itemCount={furthest + 1}
-          innerElementType={innerElementType}
-          itemSize={width / 5 + 4}
-          height={height}
-          width={width}
-          itemData={{
-            setCurrentIndex,
-            currentIndex,
-            images,
-          }}
-          ref={listRef}
-          layout="horizontal"
-        >
-          {ImageSelect}
-        </List>
-      )}
+      {({ height, width }) => {
+        return (
+          <List
+            itemCount={furthest + 1}
+            innerElementType={innerElementType}
+            itemSize={height * 0.8}
+            height={height}
+            width={width}
+            itemData={{
+              setCurrentIndex,
+              currentIndex,
+              images,
+            }}
+            ref={listRef}
+            layout="horizontal"
+          >
+            {ImageSelect}
+          </List>
+        );
+      }}
     </AutoSizer>
   );
 };

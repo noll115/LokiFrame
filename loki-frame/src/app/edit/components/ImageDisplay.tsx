@@ -13,16 +13,16 @@ const ImageDisplay: FC<Props> = ({ fileName, dataUrl }) => {
   let finalUrl = dataUrl ?? "/api/" + fileName;
   return (
     <div
-      className={`select-none transition duration-300 rounded-md overflow-hidden ${opacity}`}
+      className={`select-none h-full transition duration-300 rounded-md overflow-hidden ${opacity}`}
     >
       <Image
+        className="h-full object-contain"
         src={finalUrl}
         alt={finalUrl}
         width={600}
         height={1024}
         quality={50}
         onLoad={() => setShow(true)}
-        className="object-contain"
         placeholder="empty"
       />
     </div>

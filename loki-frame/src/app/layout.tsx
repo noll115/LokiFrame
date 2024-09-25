@@ -18,8 +18,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="pastel"
+      data-theme="mytheme"
       className="size-full"
+      style={{ scrollbarGutter: "unset" }}
     >
       <body className={inter.className + " size-full overflow-hidden"}>
         {children}

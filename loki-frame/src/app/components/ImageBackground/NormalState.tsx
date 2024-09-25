@@ -5,17 +5,16 @@ import { AnimatePresence } from "framer-motion";
 import { Image } from "@prisma/client";
 import { BackgroundImage } from "./types";
 
-let timePerPictureMS = 15 * 1000;
-
 const getNextImageIndex = (arr: any[], currIndex: number) => {
   return (currIndex + 1) % arr.length;
 };
 
 interface Props {
   images: Image[];
+  timePerPic: number;
 }
 
-const ImageTransition: FC<Props> = ({ images }) => {
+const ImageTransition: FC<Props> = ({ images, timePerPic = 15000 }) => {
   let timeOutRef = useRef<NodeJS.Timeout | null>(null);
   const [imagesArr, setImagesArr] = useState<BackgroundImage[]>([
     { image: images[0], index: 0, loaded: true, transitioned: false },
@@ -56,7 +55,7 @@ const ImageTransition: FC<Props> = ({ images }) => {
     if (imagesArr.length != 2) return;
     if (!imagesArr[0].transitioned || !imagesArr[1].loaded) return;
     if (!timeOutRef.current) {
-      timeOutRef.current = setTimeout(switchPics, timePerPictureMS);
+      timeOutRef.current = setTimeout(switchPics, timePerPic);
     }
   };
 

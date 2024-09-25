@@ -1,13 +1,15 @@
-import { getImageData } from "@/utils/dbUtils";
+import { getConfig, getImageData } from "@/utils/dbUtils";
 import { AddPhotoButton } from "./components/AddPhotoButton";
 import ImageGrid from "./components/ImageGrid/ImageGrid";
 import { headers } from "next/headers";
 import { Header } from "../components/Header";
 import { CatIcon } from "./components/CatIcon";
 import * as motion from "framer-motion/client";
+import { SettingsButton } from "./components/SettingsButton";
 
 export default async function EditPage() {
   const images = await getImageData();
+  const config = await getConfig();
   const userAgent = headers().get("user-agent") || "";
   const isMobile = /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
   return (
@@ -22,10 +24,15 @@ export default async function EditPage() {
         transition={{ type: "spring", bounce: 0.5, duration: 0.9 }}
       >
         <Header
-          icon={<CatIcon className="h-14" />}
+          icon={<CatIcon className="h-14 stroke-neutral" />}
           title="Loki-Frame"
           titleClassName="font-bold"
-          rightIcon={<AddPhotoButton />}
+          rightIcon={
+            <span className="join gap-2">
+              <AddPhotoButton />
+              <SettingsButton initConfig={config} />
+            </span>
+          }
         />
       </motion.div>
       <ImageGrid

@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import colors from "tailwindcss/colors";
 
 const config: Config = {
   content: [
@@ -18,17 +17,16 @@ const config: Config = {
     themes: [
       {
         mytheme: {
-          primary: "#BAD7f2",
+          primary: "#76AFE5",
           secondary: "#BAF2BB",
           neutral: "#031a1d",
           "base-100": "#fcfcfc",
-          info: "#0081e3",
+          info: "#ddedea",
           success: "#19cc55",
-          warning: "#ff8a00",
-          error: "#FFC1CF",
+          warning: "#fcf4dd",
+          error: "#FF5C82",
         },
       },
-      "pastel",
     ],
   },
   plugins: [require("daisyui")],

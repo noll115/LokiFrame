@@ -53,18 +53,11 @@ const DeletableImage = ({ image, onClick }: DeletableProps) => {
     <>
       <ImageDisplay fileName={image.fileName} />
       {deleting ? (
-        <div className="size-full flex justify-center items-center backdrop-blur-[2px] absolute top-0 left-0">
-          <button
-            className="btn text-5xl text-red-500 hover:scale-110 bg-black/20 rounded-box p-2 h-min btn-ghost"
-            onClick={onToggle}
-          >
-            <TbTrash />
-          </button>
-        </div>
+        <RemoveDeleteBtn onClick={onToggle} />
       ) : (
         <div className="size-full flex hover:backdrop-blur-[2px] justify-center items-center duration-300 opacity-0 group-hover:opacity-100 transition absolute top-0 left-0">
           <button
-            className="btn bg-secondary border-none drop-shadow-md rounded-box p-2 h-min text-3xl"
+            className="btn btn-error border-none drop-shadow-md rounded-box p-2 h-min text-3xl"
             onClick={onToggle}
           >
             <TbTrash />
@@ -110,16 +103,20 @@ const DeletableImageMobile = ({ image, onClick }: DeletableProps) => {
       onTouchMove={onEndTouch}
     >
       <ImageDisplay fileName={image.fileName} />
-      {deleting && (
-        <div className="size-full flex justify-center items-center backdrop-blur-[2px] absolute top-0 left-0">
-          <button
-            className="btn text-5xl text-red-500 bg-black/20 rounded-box p-2 h-min btn-ghost"
-            onTouchStart={onToggle}
-          >
-            <TbTrash />
-          </button>
-        </div>
-      )}
+      {deleting && <RemoveDeleteBtn onClick={onToggle} />}
     </motion.div>
+  );
+};
+
+const RemoveDeleteBtn = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <div className="inset-0 flex justify-center items-center backdrop-blur-[2px] absolute ">
+      <button
+        className="btn btn-ghost bg-neutral bg-opacity-30 text-error text-5xl p-2 h-min"
+        onClick={onClick}
+      >
+        <TbTrash />
+      </button>
+    </div>
   );
 };

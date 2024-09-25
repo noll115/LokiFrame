@@ -1,5 +1,5 @@
 "use client";
-import type { Config, Image } from "@prisma/client";
+import { Config, Image } from "@/db/schema";
 import { createContext, useEffect, useRef, useState } from "react";
 
 type ImagesContextProviderProps = {
@@ -16,20 +16,16 @@ type ImagesContextType = {
 export const ImagesContext = createContext<ImagesContextType>({
   images: [],
   config: {
-    clockOn: false,
+    timePerPic: 15000,
+    showClock: false,
     id: 0,
-    lastUpdatedConfig: new Date(),
-    lastUpdatedImages: new Date(),
+    configUpdateTime: 0,
+    imagesUpdateTime: 0,
   },
 });
 
 const INTERVAL_TIME = 30 * 1000;
 
-const convertConfig = (nc: Config) => {
-  nc.lastUpdatedConfig = new Date(nc.lastUpdatedConfig);
-  nc.lastUpdatedImages = new Date(nc.lastUpdatedImages);
-  return nc;
-};
 export const ImagesContextProvider = ({
   initImages,
   initConfig,
@@ -42,11 +38,11 @@ export const ImagesContextProvider = ({
   useEffect(() => {
     const checkConfig = async () => {
       let resp = await fetch("/api/ping?query=config");
-      let newConfig = await resp.json().then(convertConfig);
-      if (newConfig.lastUpdatedConfig > config.lastUpdatedConfig) {
+      let newConfig = (await resp.json()) as Config;
+      if (newConfig.configUpdateTime > config.configUpdateTime) {
         setConfig(newConfig);
       }
-      if (newConfig.lastUpdatedImages > config.lastUpdatedImages) {
+      if (newConfig.imagesUpdateTime > config.imagesUpdateTime) {
         setConfig(newConfig);
         let resp = await fetch("/api/ping?query=images");
         let images = (await resp.json()) as Image[];

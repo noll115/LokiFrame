@@ -6,11 +6,7 @@ let ip = require("ip");
 
 export default async function Home() {
   let [images, config] = await Promise.all([getImageData(), getConfig()]);
-  // images = images.map((img) => ({
-  //   ...img,
-  //   lat: Number(img.lat),
-  //   long: Number(img.long),
-  // }));
+
   const addr = ip.address();
 
   return (

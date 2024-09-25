@@ -30,7 +30,7 @@ const AddPhotoButton: FC = () => {
   return (
     <>
       <button
-        className="btn btn-square rounded-box btn-ghost text-3xl"
+        className="btn btn-square btn-ghost text-3xl"
         onClick={onBtnClick}
       >
         <MdAddAPhoto />

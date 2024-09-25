@@ -13,7 +13,7 @@ export const Header: FC<Props> = ({
   rightIcon,
 }) => {
   return (
-    <div className="w-full relative flex justify-between items-center mb-5 text-4xl min-h-11">
+    <div className="w-full relative flex justify-between items-center mb-5 text-4xl min-h-11 ">
       <span className="flex gap-1 items-center">
         {icon}
         <h1 className={titleClassName}>{title}</h1>

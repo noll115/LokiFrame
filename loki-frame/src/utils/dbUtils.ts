@@ -4,16 +4,16 @@ import fsp from "fs/promises";
 import { PhotoData } from "@/app/edit/add/page";
 import sharp from "sharp";
 import exifReader from "exif-reader";
-import { Config, Image, PrismaClient } from "@prisma/client";
+import { InsertConfig } from "@/drizzle/schema";
+import * as db from "../drizzle/db";
 
 const imagePath = path.join(process.cwd(), "photos");
-const prisma = new PrismaClient();
 
 const getImageData = async () => {
   if (!fs.existsSync(imagePath)) {
     await fsp.mkdir(imagePath);
   }
-  return await prisma.image.findMany();
+  return await db.getImages();
 };
 
 type GPSData = null | {
@@ -60,14 +60,8 @@ const addImg = async (photoData: PhotoData) => {
     .extract(cropRegion)
     .resize({ width: 700, height: 1024, fit: "inside" })
     .toFile(filePath);
-  await prisma.image.create({
-    data: {
-      fileName,
-      lat: gpsData?.lat,
-      long: gpsData?.long,
-    },
-  });
-  await UpdateConfig({ lastUpdatedImages: new Date() });
+  await db.insertImage({ fileName, lat: gpsData?.lat, long: gpsData?.long });
+  await UpdateConfig({ imagesUpdateTime: Date.now() });
   return output;
 };
 
@@ -79,23 +73,18 @@ const dms2dd = ([degrees, minutes, seconds]: number[], direction: string) => {
   return dd;
 };
 
-const deleteImg = async (id: string) => {
-  let deletedImg = await prisma.image.delete({ where: { id } });
-  await UpdateConfig({ lastUpdatedImages: new Date() });
+const deleteImg = async (id: number) => {
+  let deletedImg = await db.deleteImage(id);
+  await UpdateConfig({ imagesUpdateTime: Date.now() });
   return await fsp.rm(path.join(imagePath, deletedImg.fileName));
 };
 
 const getConfig = async () => {
-  let config = await prisma.config.upsert({
-    where: { id: 0 },
-    create: {},
-    update: {},
-  });
-  return config;
+  return await db.getConfig();
 };
 
-const UpdateConfig = async (data: Partial<Config>) => {
-  await prisma.config.update({ where: { id: 0 }, data });
+const UpdateConfig = async (data: InsertConfig) => {
+  db.updateConfig(data);
 };
 
 export { getImageData, imagePath, deleteImg, addImg, getConfig, UpdateConfig };

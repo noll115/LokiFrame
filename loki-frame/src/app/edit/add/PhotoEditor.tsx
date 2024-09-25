@@ -1,7 +1,6 @@
 import { Dispatch, FC, forwardRef, useContext, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { PhotoData } from "./page";
-
 import { AnimatePresence, motion } from "framer-motion";
 import ImageList from "./ImageList";
 import { FaUpload } from "react-icons/fa";
@@ -91,7 +90,7 @@ const ImageCropper = forwardRef<
 const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => (
   <BottomBtn
     onClick={onNext}
-    className="bg-secondary"
+    className="btn-primary"
   >
     Next
   </BottomBtn>
@@ -132,7 +131,7 @@ interface BottomBtnProps {
 const BottomBtn: FC<BottomBtnProps> = ({ children, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`btn btn-lg rounded-box text-2xl w-full  ${className}`}
+    className={`btn btn-lg rounded-box text-2xl w-full md:w-[30vw]  ${className}`}
   >
     {children}
   </button>

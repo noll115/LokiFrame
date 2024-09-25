@@ -27,10 +27,7 @@ export default function AddPhotoPage() {
       return;
     }
 
-    let applyImages = true;
-    let addPage = document.querySelector("#add");
-    addPage?.classList.remove("translate-x-1/4");
-    addPage?.classList.remove("opacity-0");
+    let abortCont = new AbortController();
 
     const compressPhotos = async () => {
       let promises: Promise<ImageFileData>[] = [];
@@ -40,33 +37,35 @@ export default function AddPhotoPage() {
             maxWidthOrHeight: 2000,
             useWebWorker: true,
             preserveExif: true,
+            signal: abortCont.signal,
           }).then((file) => readImageFile(file, newPhotos[i].name))
         );
       }
-      let data = await Promise.all(promises);
-      if (!applyImages) return;
-
-      setImagesToUpload(
-        data.map((imgData) => ({
-          ...imgData,
-          crop: null,
-        }))
-      );
+      try {
+        let data = await Promise.all(promises);
+        setImagesToUpload(
+          data.map((imgData) => ({
+            ...imgData,
+            crop: null,
+          }))
+        );
+      } catch {}
     };
     compressPhotos();
     return () => {
-      applyImages = false;
+      abortCont.abort("demount");
     };
   }, [newPhotos, router]);
 
   if (newPhotos.length == 0) {
     return null;
   }
-
   return (
-    <div
+    <motion.div
       id="add"
-      className="transition pb-4 sm:p-6 duration-300 ease-in-out opacity-0 translate-x-1/4 size-full flex items-center justify-center flex-col"
+      initial={{ opacity: 0, x: "25%" }}
+      animate={{ opacity: 1, x: 0 }}
+      className="pb-4 sm:p-6 size-full flex items-center justify-center flex-col "
     >
       <AnimatePresence
         initial={false}
@@ -77,7 +76,7 @@ export default function AddPhotoPage() {
         ) : (
           <motion.div
             key="main"
-            className="size-full flex flex-col justify-center items-center"
+            className="container size-full flex flex-col justify-center items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -89,7 +88,7 @@ export default function AddPhotoPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 
@@ -99,9 +98,6 @@ const Mainbody = () => {
   let [loading, setLoading] = useState(false);
 
   const closePage = () => {
-    let addPage = document.querySelector("#add");
-    addPage?.classList.add("translate-x-1/4");
-    addPage?.classList.add("opacity-0");
     setTimeout(() => {
       setNewPhotos([]);
       router.replace("/edit");
