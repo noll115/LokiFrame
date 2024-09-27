@@ -1,18 +1,19 @@
 services:
   web:
     build: .
-    ports:
-      - 8000:3000
+    expose:
+      - 3000
     volumes:
-      - sqlite:/app/src/drizzle/db
+      - sqlite:/app/db
     environment:
       - VIRTUAL_HOST=lokiframe.local
       - VIRTUAL_PORT=3000
-    networks:
-      - internal
+      - DB_PATH=db
+      - PORT=3000
 
 volumes:
   sqlite:
 networks:
-  internal:
-    driver: bridge
+  default:
+    external:
+      name: local
