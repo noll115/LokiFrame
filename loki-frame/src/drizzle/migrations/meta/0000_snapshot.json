@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "192b636a-3940-44fd-9cd1-3908388c4d61",
+  "id": "0ffb1b43-eb39-4101-9ffe-661ff95447ce",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "config": {
@@ -12,7 +12,7 @@
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": true
         },
         "show_clock": {
           "name": "show_clock",

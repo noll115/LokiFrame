@@ -8,7 +8,7 @@ export const ConnectModal = ({ addr }: Props) => {
   return (
     <div className="size-full flex justify-center items-center">
       <div className="bg-primary text-primary-content modal-box flex flex-col text-3xl justify-center items-center">
-        Connect to <b>{addr}/edit</b>
+        Connect to <b>{addr}</b>
         <DotLottieReact
           data={catLoad}
           loop

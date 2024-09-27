@@ -10,9 +10,9 @@ import {
 } from "@/drizzle/schema";
 import { desc, eq } from "drizzle-orm";
 
-export const connection = new Database(
-  path.join(process.cwd(), "src/drizzle/sqlite.db")
-);
+let dbPath = path.join(process.cwd(), "src/drizzle/db/sqlite.db");
+
+export const connection = new Database(dbPath);
 export const db = drizzle(connection, { schema });
 
 export const getImages = () =>
@@ -38,5 +38,8 @@ export const getConfig = async () => {
 };
 
 export const updateConfig = async (data: InsertConfig) => {
-  await db.update(configTable).set(data).where(eq(configTable.id, 0));
+  await db
+    .update(configTable)
+    .set({ ...data, configUpdateTime: Date.now() })
+    .where(eq(configTable.id, 0));
 };

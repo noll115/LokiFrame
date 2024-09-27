@@ -1,6 +1,6 @@
 "use client";
 import { useContext, type FC } from "react";
-import ImageTransition from "./NormalState";
+import ImageTransition from "./ImageTransition";
 import { ConnectModal } from "./ConnectModal";
 import { ImagesContext } from "../ImagesContext";
 
@@ -17,7 +17,7 @@ const ImageBackground: FC<Props> = ({ addr }) => {
   return (
     <div className="size-full">
       <ImageTransition
-        timePerPic={config.timePerPicMS}
+        timePerPic={config.timePerPic}
         key={images.length}
         images={images}
       />

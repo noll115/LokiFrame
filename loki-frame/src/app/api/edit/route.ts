@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
 };
 
 export const DELETE = async (req: Request) => {
-  let ids = (await req.json()) as string[];
+  let ids = (await req.json()) as number[];
   await Promise.all(ids.map((id) => deleteImg(id)));
   return NextResponse.json(await getImageData());
 };

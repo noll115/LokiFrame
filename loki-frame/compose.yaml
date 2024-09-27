@@ -1,5 +1,18 @@
 services:
-  nextjs:
+  web:
     build: .
     ports:
       - 8000:3000
+    volumes:
+      - sqlite:/app/src/drizzle/db
+    environment:
+      - VIRTUAL_HOST=lokiframe.local
+      - VIRTUAL_PORT=3000
+    networks:
+      - internal
+
+volumes:
+  sqlite:
+networks:
+  internal:
+    driver: bridge

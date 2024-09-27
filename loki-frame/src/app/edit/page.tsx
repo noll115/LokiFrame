@@ -29,8 +29,8 @@ export default async function EditPage() {
           titleClassName="font-bold"
           rightIcon={
             <span className="join gap-2">
-              <AddPhotoButton />
               <SettingsButton initConfig={config} />
+              <AddPhotoButton />
             </span>
           }
         />

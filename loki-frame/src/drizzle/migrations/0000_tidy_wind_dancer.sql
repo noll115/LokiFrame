@@ -1,5 +1,5 @@
 CREATE TABLE `config` (
-	`id` integer PRIMARY KEY NOT NULL,
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`show_clock` integer DEFAULT false NOT NULL,
 	`time_per_pic` integer DEFAULT 15000 NOT NULL,
 	`config_update_time` integer DEFAULT (unixepoch()) NOT NULL,

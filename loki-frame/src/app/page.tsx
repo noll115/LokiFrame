@@ -2,12 +2,11 @@ import { getConfig, getImageData } from "@/utils/dbUtils";
 import { ImageBackground } from "./components/ImageBackground/ImageBackgound";
 import { Clock } from "./components/Clock";
 import { ImagesContextProvider } from "./components/ImagesContext";
-let ip = require("ip");
+
+let url = "lokiframe.local";
 
 export default async function Home() {
   let [images, config] = await Promise.all([getImageData(), getConfig()]);
-
-  const addr = ip.address();
 
   return (
     <main className="size-full">
@@ -16,9 +15,9 @@ export default async function Home() {
           initConfig={config}
           initImages={images}
         >
-          <ImageBackground addr={addr} />
+          <ImageBackground addr={url} />
+          <Clock />
         </ImagesContextProvider>
-        {images.length > 0 && <Clock />}
       </div>
     </main>
   );

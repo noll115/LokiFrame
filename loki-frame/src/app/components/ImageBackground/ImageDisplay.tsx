@@ -1,7 +1,7 @@
 import { default as NextImage } from "next/image";
 import { FC } from "react";
 import { BackgroundImage, SCREEN_HEIGHT, SCREEN_WIDTH } from "./types";
-import { motion, useAnimate } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface Props {
   bgImage: BackgroundImage;

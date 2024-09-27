@@ -2,12 +2,12 @@ import { FC, RefObject, useEffect, useRef, useState } from "react";
 import ImageDisplay from "../ImageDisplay";
 import { TbTrash } from "react-icons/tb";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Image } from "@prisma/client";
+import { Image } from "@/drizzle/schema";
 
 interface Props {
   isMobile: boolean;
   image: Image;
-  onClick: (id: string, deleting: boolean) => void;
+  onClick: (id: number, deleting: boolean) => void;
   containerRef: RefObject<HTMLDivElement>;
 }
 

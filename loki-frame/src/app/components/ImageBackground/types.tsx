@@ -1,4 +1,4 @@
-import { Image } from "@prisma/client";
+import { Image } from "@/drizzle/schema";
 
 interface BackgroundImage {
   image: Image;

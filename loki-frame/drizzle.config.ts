@@ -7,6 +7,6 @@ export default defineConfig({
   verbose: true,
   strict: true,
   dbCredentials: {
-    url: "file:./src/drizzle/sqlite.db",
+    url: "file:./src/drizzle/db/sqlite.db",
   },
 });

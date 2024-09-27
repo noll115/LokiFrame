@@ -6,13 +6,11 @@ export const imageTable = sqliteTable("image", {
   fileName: text("file_name").notNull(),
   lat: real("lat"),
   long: real("long"),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`(unixepoch())`
-  ),
+  createdAt: integer("created_at").default(sql`(unixepoch())`),
 });
 
 export const configTable = sqliteTable("config", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey({ autoIncrement: true }),
   showClock: integer("show_clock", { mode: "boolean" })
     .default(false)
     .notNull(),

@@ -1,5 +1,5 @@
 "use client";
-import { Config, Image } from "@/db/schema";
+import { Config, Image } from "@/drizzle/schema";
 import { createContext, useEffect, useRef, useState } from "react";
 
 type ImagesContextProviderProps = {

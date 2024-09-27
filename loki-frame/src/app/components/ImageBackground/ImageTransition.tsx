@@ -2,8 +2,8 @@
 import { FC, useEffect, useRef, useState } from "react";
 import ImageDisplay from "./ImageDisplay";
 import { AnimatePresence } from "framer-motion";
-import { Image } from "@prisma/client";
 import { BackgroundImage } from "./types";
+import { Image } from "@/drizzle/schema";
 
 const getNextImageIndex = (arr: any[], currIndex: number) => {
   return (currIndex + 1) % arr.length;
@@ -14,7 +14,7 @@ interface Props {
   timePerPic: number;
 }
 
-const ImageTransition: FC<Props> = ({ images, timePerPic = 15000 }) => {
+const ImageTransition: FC<Props> = ({ images, timePerPic }) => {
   let timeOutRef = useRef<NodeJS.Timeout | null>(null);
   const [imagesArr, setImagesArr] = useState<BackgroundImage[]>([
     { image: images[0], index: 0, loaded: true, transitioned: false },

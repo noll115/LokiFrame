@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageGridItem } from "./GridItem";
-import { Image } from "@prisma/client";
+import { Image } from "@/drizzle/schema";
 
 interface Props {
   serverImages: Image[];
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function ImageGrid({ serverImages, isMobile }: Props) {
-  const [imagesDeleting, setImagesDeleting] = useState<string[]>([]);
+  const [imagesDeleting, setImagesDeleting] = useState<number[]>([]);
   const [images, setImages] = useState(serverImages);
   const [pending, setPending] = useState(false);
   const [showImages, setShowImages] = useState(false);
@@ -21,7 +21,7 @@ export default function ImageGrid({ serverImages, isMobile }: Props) {
     setShowImages(true);
   }, []);
 
-  const onImageClick = (id: string, deleting: boolean) => {
+  const onImageClick = (id: number, deleting: boolean) => {
     if (deleting) {
       setImagesDeleting([...imagesDeleting, id]);
     } else {
