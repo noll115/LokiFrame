@@ -24,7 +24,7 @@ export const ImagesContext = createContext<ImagesContextType>({
   },
 });
 
-const INTERVAL_TIME = 30 * 1000;
+const INTERVAL_TIME = 10 * 1000;
 
 export const ImagesContextProvider = ({
   initImages,
