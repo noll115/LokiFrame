@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AddPhotosProvider from "./components/AddPhotosProvider";
 
 const inter = Inter({ weight: ["400", "500", "700"], subsets: ["latin"] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({
       style={{ scrollbarGutter: "unset" }}
     >
       <body className={inter.className + " size-full overflow-hidden"}>
-        {children}
+        <div className="size-full p-4 pb-0 sm:p-6 overflow-hidden">
+          <AddPhotosProvider>{children}</AddPhotosProvider>
+        </div>
       </body>
     </html>
   );

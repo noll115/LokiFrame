@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+Download Raspbian Lite
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Install
+`sudo apt-get update -qq
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+sudo apt-get install --no-install-recommends xserver-xorg-video-all \
+ xserver-xorg-input-all xserver-xorg-core xinit x11-xserver-utils \
+ chromium-browser unclutter
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Go to: Boot Options > Console Autologin
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+sudo raspi-config
+`
 
-## Learn More
+Add to .bash_profile
+`if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]
+then
+  startx
+fi`
+Add to .xinitrc
+`
+#!/usr/bin/env sh
+xset -dpms
+xset s off
+xset s noblank
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+unclutter &
+chromium-browser http://localhost:3000 \
+ --window-size=1920,1080 \
+ --window-position=0,0 \
+ --start-fullscreen \
+ --kiosk \
+ --noerrdialogs \
+ --disable-translate \
+ --no-first-run \
+ --fast \
+ --fast-start \
+ --disable-infobars \
+ --disable-features=TranslateUI \
+ --overscroll-history-navigation=0 \
+ --disable-pinch
+`
+In /boot/config.txt`
+disable_overscan=1
+`

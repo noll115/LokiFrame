@@ -9,7 +9,6 @@ import {
   useEffect,
   useRef,
   useState,
-  useTransition,
 } from "react";
 import { PhotoData } from "./page";
 

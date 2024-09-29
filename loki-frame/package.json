@@ -8,7 +8,7 @@
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "db:generate": "npx drizzle-kit generate",
-    "db:migrate": "tsx src/drizzle/migrate.ts",
+    "db:migrate": "npx drizzle-kit migrate",
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
@@ -25,8 +25,7 @@
     "react-icons": "^5.3.0",
     "react-virtualized-auto-sizer": "^1.0.24",
     "react-window": "^1.8.10",
-    "sharp": "^0.33.5",
-    "tsx": "^4.19.1"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",

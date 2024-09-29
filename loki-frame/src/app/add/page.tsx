@@ -2,14 +2,14 @@
 import { Area } from "react-easy-crop";
 import PhotoEditor from "./PhotoEditor";
 import { useContext, useEffect, useState } from "react";
-import { AddPhotoContext } from "../components/AddPhotosProvider";
+import { AddPhotoContext } from "@/app/components/AddPhotosProvider";
 import imageCompression from "browser-image-compression";
 import { ImageFileData, readImageFile } from "@/utils/readImageFile";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
 import { ImageProvider } from "./ImageContext";
-import { Header } from "@/app/components/Header";
+import { Header } from "@/app/frame/components/Header";
 import LoadingBg from "./LoadingBg";
 
 interface PhotoData extends ImageFileData {
@@ -23,7 +23,7 @@ export default function AddPhotoPage() {
 
   useEffect(() => {
     if (newPhotos.length == 0) {
-      router.push("/edit");
+      router.push("/");
       return;
     }
 
@@ -100,7 +100,7 @@ const Mainbody = () => {
   const closePage = () => {
     setTimeout(() => {
       setNewPhotos([]);
-      router.replace("/edit");
+      router.replace("/");
     }, 300);
   };
 

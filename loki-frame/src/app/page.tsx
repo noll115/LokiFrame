@@ -1,24 +1,44 @@
 import { getConfig, getImageData } from "@/utils/dbUtils";
-import { ImageBackground } from "./components/ImageBackground/ImageBackgound";
-import { Clock } from "./components/Clock";
-import { ImagesContextProvider } from "./components/ImagesContext";
+import { AddPhotoButton } from "./components/AddPhotoButton";
+import ImageGrid from "./components/ImageGrid/ImageGrid";
+import { headers } from "next/headers";
+import { Header } from "./frame/components/Header";
+import { CatIcon } from "./components/CatIcon";
+import * as motion from "framer-motion/client";
+import { SettingsButton } from "./components/SettingsButton";
 
-let url = "lokiframe.local";
-
-export default async function Home() {
-  let [images, config] = await Promise.all([getImageData(), getConfig()]);
-
+export default async function EditPage() {
+  const images = await getImageData();
+  const config = await getConfig();
+  const userAgent = headers().get("user-agent") || "";
+  const isMobile = /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
   return (
-    <main className="size-full">
-      <div className="relative size-full">
-        <ImagesContextProvider
-          initConfig={config}
-          initImages={images}
-        >
-          <ImageBackground addr={url} />
-          <Clock />
-        </ImagesContextProvider>
-      </div>
-    </main>
+    <div
+      id="edit"
+      className="container mx-auto flex flex-col size-full items-center transition duration-500 ease-in-out max-h-full"
+    >
+      <motion.div
+        className="w-full"
+        initial={{ opacity: 0, translateY: -10 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "spring", bounce: 0.5, duration: 0.9 }}
+      >
+        <Header
+          icon={<CatIcon className="h-14 stroke-neutral" />}
+          title="Loki-Frame"
+          titleClassName="font-bold"
+          rightIcon={
+            <span className="join gap-2">
+              <SettingsButton initConfig={config} />
+              <AddPhotoButton />
+            </span>
+          }
+        />
+      </motion.div>
+      <ImageGrid
+        serverImages={images}
+        isMobile={isMobile}
+      />
+    </div>
   );
 }

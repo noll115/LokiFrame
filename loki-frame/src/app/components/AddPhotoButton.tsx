@@ -20,7 +20,7 @@ const AddPhotoButton: FC = () => {
     let editPage = document.querySelector("#edit");
     editPage?.classList.add("-translate-x-1/4");
     editPage?.classList.add("opacity-0");
-    setTimeout(() => router.push("/edit/add"), 400);
+    setTimeout(() => router.push("/add"), 400);
   };
 
   const onBtnClick = () => {

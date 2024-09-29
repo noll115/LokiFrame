@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: loki-frame
     build: .
     ports:
       - 80:3000
@@ -11,6 +12,7 @@ services:
       - VIRTUAL_PORT=3000
       - DB_PATH=db
       - PORT=3000
+      - IP=0.0.0.0
     restart: unless-stopped
 
 volumes:

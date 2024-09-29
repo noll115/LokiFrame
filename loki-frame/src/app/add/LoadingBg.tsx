@@ -1,5 +1,5 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import catLoad from "../../components/cat_load.json";
+import catLoad from "../frame/components/cat_load.json";
 import { motion } from "framer-motion";
 import { FC, forwardRef } from "react";
 
