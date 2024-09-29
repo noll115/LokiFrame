@@ -24,7 +24,7 @@ export default function RootLayout({
       style={{ scrollbarGutter: "unset" }}
     >
       <body className={inter.className + " size-full overflow-hidden"}>
-        <div className="size-full p-4 pb-0 sm:p-6 overflow-hidden">
+        <div className="size-full overflow-hidden">
           <AddPhotosProvider>{children}</AddPhotosProvider>
         </div>
       </body>

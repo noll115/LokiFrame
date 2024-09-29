@@ -63,9 +63,9 @@ export default function AddPhotoPage() {
   return (
     <motion.div
       id="add"
-      initial={{ opacity: 0, x: "25%" }}
-      animate={{ opacity: 1, x: 0 }}
-      className="pb-4 sm:p-6 size-full flex items-center justify-center flex-col "
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="pb-2 size-full flex items-center justify-center flex-col "
     >
       <AnimatePresence
         initial={false}

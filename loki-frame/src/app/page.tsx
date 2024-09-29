@@ -12,6 +12,7 @@ export default async function EditPage() {
   const config = await getConfig();
   const userAgent = headers().get("user-agent") || "";
   const isMobile = /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
+
   return (
     <div
       id="edit"
@@ -35,10 +36,12 @@ export default async function EditPage() {
           }
         />
       </motion.div>
-      <ImageGrid
-        serverImages={images}
-        isMobile={isMobile}
-      />
+      <div className="mx-2">
+        <ImageGrid
+          serverImages={images}
+          isMobile={isMobile}
+        />
+      </div>
     </div>
   );
 }

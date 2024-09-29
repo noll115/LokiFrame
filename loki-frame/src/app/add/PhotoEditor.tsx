@@ -35,7 +35,7 @@ const PhotoEditor = ({ onClose, setLoading }: Props) => {
             />
           </AnimatePresence>
         </div>
-        <div className="basis-32 w-full mt-3">
+        <div className="basis-32 w-full mt-1">
           <ImageList
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
@@ -131,7 +131,7 @@ interface BottomBtnProps {
 const BottomBtn: FC<BottomBtnProps> = ({ children, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`btn btn-lg rounded-box text-2xl w-full md:w-[30vw]  ${className}`}
+    className={`btn btn-lg rounded-box text-2xl self-end mr-5 mt-4 ${className}`}
   >
     {children}
   </button>
