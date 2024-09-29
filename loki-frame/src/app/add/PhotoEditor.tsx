@@ -131,7 +131,7 @@ interface BottomBtnProps {
 const BottomBtn: FC<BottomBtnProps> = ({ children, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`btn btn-lg rounded-box text-2xl self-end mr-5 mt-4 ${className}`}
+    className={`btn btn-lg rounded-box text-2xl self-end mr-2 mt-4 ${className}`}
   >
     {children}
   </button>

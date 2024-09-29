@@ -10,8 +10,10 @@ export const ConnectModal = ({ addr }: Props) => {
   const [lottieRef, setLottieRef] = useState<DotLottie | null>(null);
   const [lottieLoaded, setLottieLoaded] = useState(false);
   useEffect(() => {
+    if (lottieRef?.isReady) {
+      setLottieLoaded(true);
+    }
     const onLoad = () => setLottieLoaded(true);
-
     lottieRef?.addEventListener("load", onLoad);
     return () => {
       lottieRef?.removeEventListener("load", onLoad);

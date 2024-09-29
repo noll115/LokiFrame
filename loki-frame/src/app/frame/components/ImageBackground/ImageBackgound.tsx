@@ -10,7 +10,6 @@ interface Props {
 
 const ImageBackground: FC<Props> = ({ addr }) => {
   const { images, config } = useContext(ImagesContext);
-
   if (images.length == 0) {
     return <ConnectModal addr={addr} />;
   }
