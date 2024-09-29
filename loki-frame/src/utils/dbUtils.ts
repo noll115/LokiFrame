@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import fsp from "fs/promises";
-import { PhotoData } from "@/app/edit/add/page";
+import { PhotoData } from "@/app/add/page";
 import sharp from "sharp";
 import exifReader from "exif-reader";
 import { InsertConfig } from "@/drizzle/schema";

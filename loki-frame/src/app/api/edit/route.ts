@@ -1,4 +1,4 @@
-import { PhotoData } from "@/app/edit/add/page";
+import { PhotoData } from "@/app/add/page";
 import { addImg, deleteImg, getImageData } from "@/utils/dbUtils";
 import { NextResponse } from "next/server";
 import { OutputInfo } from "sharp";
