@@ -16,7 +16,7 @@ export default async function EditPage() {
   return (
     <div
       id="edit"
-      className="container mx-auto flex flex-col size-full items-center transition duration-500 ease-in-out max-h-full"
+      className="container m-auto flex flex-col size-full items-center transition duration-500 ease-in-out max-h-full"
     >
       <motion.div
         className="w-full"
@@ -36,12 +36,10 @@ export default async function EditPage() {
           }
         />
       </motion.div>
-      <div className="mx-2">
-        <ImageGrid
-          serverImages={images}
-          isMobile={isMobile}
-        />
-      </div>
+      <ImageGrid
+        serverImages={images}
+        isMobile={isMobile}
+      />
     </div>
   );
 }

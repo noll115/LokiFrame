@@ -28,7 +28,7 @@ export const SettingsButton = ({ initConfig }: Props) => {
         <div className="modal-box relative">
           <h3 className="font-bold text-xl pb-4">Settings</h3>
           <form method="dialog">
-            <button className="btn btn-sm text-2xl border-box btn-ghost absolute right-6 top-6">
+            <button className="btn outline-none btn-sm text-2xl border-box btn-ghost absolute right-6 top-6">
               <MdClose />
             </button>
             <div className="form-control gap-4">

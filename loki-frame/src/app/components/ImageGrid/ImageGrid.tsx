@@ -46,7 +46,7 @@ export default function ImageGrid({ serverImages, isMobile }: Props) {
     <>
       <div
         ref={scrollContainerRef}
-        className="relative size-full overflow-y-auto"
+        className="relative overflow-y-auto px-2"
       >
         <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-1 max-w-max pointer pb-24">
           <AnimatePresence>
