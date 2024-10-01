@@ -1,7 +1,20 @@
-import { FC, RefObject, useEffect, useRef, useState } from "react";
+import {
+  DOMAttributes,
+  FC,
+  RefObject,
+  TouchEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import ImageDisplay from "../ImageDisplay";
 import { TbTrash } from "react-icons/tb";
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  HTMLMotionProps,
+  motion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { Image } from "@/drizzle/schema";
 
 interface Props {
@@ -43,27 +56,30 @@ interface DeletableProps extends Omit<Props, "isMobile" | "containerRef"> {}
 
 const DeletableImage = ({ image, onClick }: DeletableProps) => {
   const [deleting, setDeleting] = useState(false);
-
+  let isProcessing = image.processing;
   const onToggle = () => {
     onClick(image.id, !deleting);
     setDeleting(!deleting);
   };
 
+  const hoverBtn = isProcessing ? null : (
+    <div className="size-full flex hover:backdrop-blur-[2px] justify-center items-center duration-300 opacity-0 group-hover:opacity-100 transition absolute top-0 left-0">
+      <button
+        className="btn btn-error border-none drop-shadow-md rounded-box p-2 h-min text-3xl"
+        onClick={onToggle}
+      >
+        <TbTrash />
+      </button>
+    </div>
+  );
+
   return (
     <>
-      <ImageDisplay fileName={image.fileName} />
-      {deleting ? (
-        <RemoveDeleteBtn onClick={onToggle} />
-      ) : (
-        <div className="size-full flex hover:backdrop-blur-[2px] justify-center items-center duration-300 opacity-0 group-hover:opacity-100 transition absolute top-0 left-0">
-          <button
-            className="btn btn-error border-none drop-shadow-md rounded-box p-2 h-min text-3xl"
-            onClick={onToggle}
-          >
-            <TbTrash />
-          </button>
-        </div>
-      )}
+      <ImageDisplay
+        fileName={image.fileName}
+        isProcessing={image.processing}
+      />
+      {deleting ? <RemoveDeleteBtn onClick={onToggle} /> : hoverBtn}
     </>
   );
 };
@@ -73,6 +89,7 @@ const HOLD_LENGTH = 300;
 const DeletableImageMobile = ({ image, onClick }: DeletableProps) => {
   const [deleting, setDeleting] = useState(false);
   const timerRef = useRef<NodeJS.Timeout>();
+  const isProcessing = image.processing;
 
   useEffect(() => {
     return () => {
@@ -98,11 +115,14 @@ const DeletableImageMobile = ({ image, onClick }: DeletableProps) => {
       className="relative"
       animate={{ scale: deleting ? 0.95 : 1 }}
       transition={{ type: "spring", duration: 0.8, bounce: 0.7 }}
-      onTouchStart={onLongTouch}
+      onTouchStart={isProcessing ? undefined : onLongTouch}
       onTouchEnd={onEndTouch}
       onTouchMove={onEndTouch}
     >
-      <ImageDisplay fileName={image.fileName} />
+      <ImageDisplay
+        fileName={image.fileName}
+        isProcessing={image.processing}
+      />
       {deleting && <RemoveDeleteBtn onClick={onToggle} />}
     </motion.div>
   );

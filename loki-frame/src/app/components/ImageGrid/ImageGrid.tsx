@@ -21,6 +21,19 @@ export default function ImageGrid({ serverImages, isMobile }: Props) {
     setShowImages(true);
   }, []);
 
+  useEffect(() => {
+    if (images.some((img) => img.processing)) {
+      const getImages = async () => {
+        let res = await fetch("api/edit");
+        setImages(await res.json());
+      };
+      let timeoutRef = setTimeout(getImages, 8000);
+      return () => {
+        clearTimeout(timeoutRef);
+      };
+    }
+  }, [images]);
+
   const onImageClick = (id: number, deleting: boolean) => {
     if (deleting) {
       setImagesDeleting([...imagesDeleting, id]);

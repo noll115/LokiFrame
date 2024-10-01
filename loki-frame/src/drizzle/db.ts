@@ -8,7 +8,7 @@ import {
   imageTable,
   InsertConfig,
 } from "@/drizzle/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 
 let dbPath = path.join(
   process.cwd(),
@@ -22,15 +22,29 @@ export const db = drizzle(connection, { schema });
 export const getImages = () =>
   db.select().from(imageTable).orderBy(desc(imageTable.createdAt));
 
-export const insertImage = async (newImage: InsertImage) =>
-  await db.insert(imageTable).values(newImage);
+export const insertImages = async (newImages: InsertImage[]) =>
+  await db
+    .insert(imageTable)
+    .values(newImages)
+    .returning({ id: imageTable.id, fileName: imageTable.fileName });
 
-export const deleteImage = async (id: number) => {
+export const updateImage = async (id: number, image: Partial<InsertImage>) =>
+  await db.update(imageTable).set(image).where(eq(imageTable.id, id));
+
+export const insertImage = async (newImage: InsertImage) => {
+  let img = await db
+    .insert(imageTable)
+    .values(newImage)
+    .returning({ id: imageTable.id });
+  return img[0];
+};
+
+export const deleteImages = async (ids: number[]) => {
   let res = await db
     .delete(imageTable)
-    .where(eq(imageTable.id, id))
-    .returning();
-  return res[0];
+    .where(inArray(imageTable.id, ids))
+    .returning({ fileName: imageTable.fileName });
+  return res;
 };
 
 export const getConfig = async () => {

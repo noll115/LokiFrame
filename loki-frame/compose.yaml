@@ -1,19 +1,11 @@
 services:
-  web:
-    container_name: loki-frame
-    build: .
+  redis:
+    image: redis
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
     ports:
-      - 80:3000
+      - 6379:6379
     volumes:
-      - sqlite:/app/db
-      - photos:/app/photos
-    environment:
-      - VIRTUAL_HOST=lokiframe.local
-      - VIRTUAL_PORT=3000
-      - DB_PATH=db
-      - PORT=3000
-    restart: unless-stopped
-
+      - cache:/data
 volumes:
-  sqlite:
-  photos:
+  cache:

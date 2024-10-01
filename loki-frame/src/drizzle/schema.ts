@@ -7,6 +7,9 @@ export const imageTable = sqliteTable("image", {
   lat: real("lat"),
   long: real("long"),
   createdAt: integer("created_at").default(sql`(unixepoch())`),
+  processing: integer("processing", { mode: "boolean" })
+    .notNull()
+    .default(false),
 });
 
 export const configTable = sqliteTable("config", {
