@@ -1,33 +1,48 @@
-## Getting Started
 
-Download Raspbian Lite
+# Lokiframe
 
-Install
-`sudo apt-get update -qq
+A Nextjs project for people who want to locally host a digital picture frame.
+Users can add pictures and change picture frame settings at `/` and photo show is on `/frame`.
 
-sudo apt-get install --no-install-recommends xserver-xorg-video-all \
+
+## Raspberry Pi Setup to bare minimum
+Setup Raspbian Lite on Raspberry Pi
+
+**Initial Commands:** \
+`sudo apt update`
+
+```
+sudo apt install --no-install-recommends xserver-xorg-video-all \
  xserver-xorg-input-all xserver-xorg-core xinit x11-xserver-utils \
  chromium-browser unclutter
+ ```
+***Install node v20***
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+nvm install 20
+``` 
 
-# Go to: Boot Options > Console Autologin
+**Set auto login:**  
+- `sudo raspi-config` 
+  -  Boot Options > Console Autologin 
 
-sudo raspi-config
-`
-
-Add to .bash_profile
-`if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]
+**Add to ~/.profile:**
+```bash
+if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]
 then
   startx
-fi`
-Add to .xinitrc
-`
+fi
+```
+
+**Add to .xinitrc:**
+```bash
 #!/usr/bin/env sh
 xset -dpms
 xset s off
 xset s noblank
 
 unclutter &
-chromium-browser http://localhost:3000 \
+chromium-browser http://localhost:3000/frame \
  --window-size=1920,1080 \
  --window-position=0,0 \
  --start-fullscreen \
@@ -41,7 +56,25 @@ chromium-browser http://localhost:3000 \
  --disable-features=TranslateUI \
  --overscroll-history-navigation=0 \
  --disable-pinch
-`
-In /boot/config.txt`
+```
+
+**Set /boot/config.txt**
+```
 disable_overscan=1
-`
+```
+
+## Run Locally
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run build
+  npm run start
+```
+
