@@ -78,3 +78,5 @@ Start the server
   npm run start
 ```
 
+`localhost:3000` to add photos \
+`localhost:3000/frame` for digital picture frame
