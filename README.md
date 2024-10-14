@@ -1,9 +1,20 @@
 
 # Lokiframe
 
-A Nextjs project for people who want to locally host a digital picture frame.
+A Next.js project for people who want to locally host a digital picture frame.
 Users can add pictures and change picture frame settings at `/` and photo show is on `/frame`.
 
+
+## Tech Used
+
+- Next.js
+- React
+- Tailwind CSS (Daisy UI)
+- SQLite
+- Drizzle ORM
+- Sharp
+- Framer Motion
+- DotLottie
 
 ## Raspberry Pi Setup to bare minimum
 Setup Raspbian Lite on Raspberry Pi
