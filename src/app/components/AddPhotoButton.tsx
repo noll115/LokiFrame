@@ -1,10 +1,14 @@
 "use client";
-import { ChangeEventHandler, FC, useContext, useRef, useState } from "react";
-import { MdAddAPhoto } from "react-icons/md";
+import { ChangeEventHandler, FC, useContext, useRef } from "react";
+import { MdAddAPhoto, MdArrowUpward } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { AddPhotoContext } from "./AddPhotosProvider";
 
-const AddPhotoButton: FC = () => {
+interface Props {
+  hasImages: boolean;
+}
+
+const AddPhotoButton = ({ hasImages }: Props) => {
   const { setNewPhotos } = useContext(AddPhotoContext);
   let fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -30,10 +34,16 @@ const AddPhotoButton: FC = () => {
   return (
     <>
       <button
-        className="btn btn-square btn-ghost text-3xl"
+        className="btn btn-square btn-ghost text-3xl relative"
         onClick={onBtnClick}
       >
         <MdAddAPhoto />
+        {!hasImages && (
+          <div className="absolute top-full pointer-events-none min-w-max right-2 font-normal bg-primary-content">
+            <span className="text-xl">Start adding photos!</span>
+            <MdArrowUpward className="inline-block animate-bounce" />
+          </div>
+        )}
       </button>
       <input
         type="file"

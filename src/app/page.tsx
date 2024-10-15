@@ -25,13 +25,13 @@ export default async function EditPage() {
         transition={{ type: "spring", bounce: 0.5, duration: 0.9 }}
       >
         <Header
-          icon={<CatIcon className="h-14 stroke-neutral" />}
+          icon={<CatIcon className="h-14 stroke-neutral-content" />}
           title="Loki-Frame"
           titleClassName="font-bold"
           rightIcon={
             <span className="join gap-2">
               <SettingsButton initConfig={config} />
-              <AddPhotoButton />
+              <AddPhotoButton hasImages={images.length > 0} />
             </span>
           }
         />

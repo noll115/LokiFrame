@@ -88,12 +88,7 @@ const ImageCropper = forwardRef<
 });
 
 const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => (
-  <BottomBtn
-    onClick={onNext}
-    className="btn-primary"
-  >
-    Next
-  </BottomBtn>
+  <BottomBtn onClick={onNext}>Next</BottomBtn>
 );
 interface UploadProps {
   onClose: () => void;
@@ -115,23 +110,19 @@ const UploadBtn = ({ onClose, images, setLoading }: UploadProps) => {
   };
 
   return (
-    <BottomBtn
-      onClick={submitFiles}
-      className="bg-primary"
-    >
+    <BottomBtn onClick={submitFiles}>
       Upload <FaUpload className="text-2xl" />
     </BottomBtn>
   );
 };
 interface BottomBtnProps {
   children: React.ReactNode;
-  className: string;
   onClick: () => void;
 }
-const BottomBtn: FC<BottomBtnProps> = ({ children, onClick, className }) => (
+const BottomBtn: FC<BottomBtnProps> = ({ children, onClick }) => (
   <button
     onClick={onClick}
-    className={`btn btn-lg rounded-box text-2xl self-end mr-2 mt-4 ${className}`}
+    className={`btn btn-primary btn-lg rounded-box text-2xl self-end mr-2 mt-4`}
   >
     {children}
   </button>

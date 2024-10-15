@@ -1,65 +1,37 @@
-**/node_modules
-lokiFrame-client/.expo/
-lokiFrame-client/dist/
-lokiFrame-client/npm-debug.*
-lokiFrame-client/*.jks
-lokiFrame-client/*.p8
-lokiFrame-client/*.p12
-lokiFrame-client/*.key
-lokiFrame-client/*.mobileprovision
-lokiFrame-client/*.orig.*
-lokiFrame-client/web-build/
-lokiFrame-client/ios/build
-lokiFrame-client/# macOS
-lokiFrame-client/.DS_Store
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-photos/
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+.env*
+**.db
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
+*.pem
 
-photos/
-.DS_Store
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# local env files
+.env*.local
 
-## Build generated
-build/
-DerivedData/
+# vercel
+.vercel
 
-## Various settings
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata/
-
-## Other
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
-
-## Obj-C/Swift specific
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
-
-## Playgrounds
-timeline.xctimeline
-playground.xcworkspace
-
-# Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-.build/
-token.json
-credentials.json
-calendars.json
+# typescript
+*.tsbuildinfo
+next-env.d.ts

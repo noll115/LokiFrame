@@ -65,7 +65,7 @@ export default function AddPhotoPage() {
       id="add"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="pb-2 size-full flex items-center justify-center flex-col "
+      className="pb-2 h-full max-w-screen-lg m-auto flex items-center justify-center flex-col "
     >
       <AnimatePresence
         initial={false}

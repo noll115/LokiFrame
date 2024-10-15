@@ -43,12 +43,14 @@ export const SettingsButton = ({ initConfig }: Props) => {
                 />
               </label>
 
-              <label className="label">
-                <span className="label-text">Time per picture</span>
+              <label className="form-control gap-2">
+                <span className="label-text">
+                  Time per picture: <b>{timePerPic / 1000}</b>s
+                </span>
                 <input
                   type="range"
-                  min="8000"
-                  max="20000"
+                  min="5000"
+                  max="15000"
                   name="timePerPic"
                   value={timePerPic}
                   onChange={({ target }) => setTimePerPic(Number(target.value))}

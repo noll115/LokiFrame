@@ -10,11 +10,7 @@ import {
 } from "@/drizzle/schema";
 import { desc, eq, inArray } from "drizzle-orm";
 
-let dbPath = path.join(
-  process.cwd(),
-  process.env.DB_PATH as string,
-  "sqlite.db"
-);
+let dbPath = path.join(process.cwd(), process.env.DB_PATH ?? "db", "sqlite.db");
 
 export const connection = new Database(dbPath);
 export const db = drizzle(connection, { schema });
