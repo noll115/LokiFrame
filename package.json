@@ -12,13 +12,14 @@
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
+    "@libsql/client": "^0.14.0",
     "@lottiefiles/dotlottie-react": "^0.8.12",
-    "better-sqlite3": "^11.3.0",
     "browser-image-compression": "^2.0.2",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.35.0",
     "exif-reader": "^2.0.1",
     "framer-motion": "^11.5.5",
     "next": "14.2.5",
+    "plaiceholder": "^3.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-easy-crop": "^5.0.8",
@@ -28,13 +29,12 @@
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-window": "^1.8.8",
     "daisyui": "^4.12.10",
-    "drizzle-kit": "^0.24.2",
+    "drizzle-kit": "^0.26.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",

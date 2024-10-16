@@ -1,5 +1,4 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { drizzle } from "drizzle-orm/libsql";
 import path from "path";
 import * as schema from "./schema";
 import {
@@ -12,8 +11,7 @@ import { desc, eq, inArray } from "drizzle-orm";
 
 let dbPath = path.join(process.cwd(), process.env.DB_PATH ?? "db", "sqlite.db");
 
-export const connection = new Database(dbPath);
-export const db = drizzle(connection, { schema });
+export const db = drizzle("file:" + dbPath, { schema });
 
 export const getImages = () =>
   db.select().from(imageTable).orderBy(desc(imageTable.createdAt));

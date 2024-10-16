@@ -6,6 +6,7 @@ import sharp from "sharp";
 import exifReader from "exif-reader";
 import { InsertConfig, InsertImage } from "@/drizzle/schema";
 import * as db from "../drizzle/db";
+import { getPlaiceholder } from "plaiceholder";
 
 const imagePath = path.join(process.cwd(), "photos");
 
@@ -27,7 +28,11 @@ const createFilename = (photoData: PhotoData): InsertImage => {
   let [name, type] = photoData.fileName.split(
     photoData.fileName[extensionSplit]
   );
-  return { fileName: name + currentTime + "." + type };
+  return {
+    fileName: name + currentTime + "." + type,
+    blurData: "",
+    processing: true,
+  };
 };
 
 const addImgs = async (photoDatas: PhotoData[]) => {
@@ -64,15 +69,17 @@ const addImgs = async (photoDatas: PhotoData[]) => {
     };
 
     let filePath = path.join(imagePath, fileName);
-    await s
+    let img = s
       .extract(cropRegion)
-      .resize({ width: 700, height: 1024, fit: "inside" })
-      .toFile(filePath);
-
+      .resize({ width: 700, height: 1024, fit: "inside" });
+    let resizedBuffer = await img.toBuffer();
+    const { base64 } = await getPlaiceholder(resizedBuffer);
+    await img.toFile(filePath);
     await db.updateImage(id, {
       lat: gpsData?.lat,
       long: gpsData?.long,
       processing: false,
+      blurData: base64,
     });
   }
   await UpdateConfig({ imagesUpdateTime: Date.now() });

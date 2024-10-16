@@ -13,7 +13,8 @@
 # next.js
 /.next/
 /out/
-
+/photos
+.vscode
 # production
 /build
 

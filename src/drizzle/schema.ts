@@ -10,6 +10,7 @@ export const imageTable = sqliteTable("image", {
   processing: integer("processing", { mode: "boolean" })
     .notNull()
     .default(false),
+  blurData: text("blur_data").notNull(),
 });
 
 export const configTable = sqliteTable("config", {

@@ -7,7 +7,6 @@ export default defineConfig({
   out: "./src/drizzle/migrations",
   dialect: "sqlite",
   verbose: true,
-  strict: true,
   dbCredentials: {
     url: "file:" + dbPath,
   },

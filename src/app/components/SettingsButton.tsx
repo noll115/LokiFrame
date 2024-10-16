@@ -39,7 +39,7 @@ export const SettingsButton = ({ initConfig }: Props) => {
                   name="showClock"
                   defaultChecked={showClock}
                   onChange={({ target }) => setShowClock(target.checked)}
-                  className="toggle toggle-primary"
+                  className="toggle toggle-accent"
                 />
               </label>
 
@@ -55,7 +55,7 @@ export const SettingsButton = ({ initConfig }: Props) => {
                   value={timePerPic}
                   onChange={({ target }) => setTimePerPic(Number(target.value))}
                   step="1000"
-                  className="range range-primary range-md"
+                  className="range range-accent range-md"
                 />
               </label>
             </div>

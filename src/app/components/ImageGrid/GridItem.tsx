@@ -78,6 +78,7 @@ const DeletableImage = ({ image, onClick }: DeletableProps) => {
       <ImageDisplay
         fileName={image.fileName}
         isProcessing={image.processing}
+        dataBlurUrl={image.blurData}
       />
       {deleting ? <RemoveDeleteBtn onClick={onToggle} /> : hoverBtn}
     </>
@@ -122,6 +123,7 @@ const DeletableImageMobile = ({ image, onClick }: DeletableProps) => {
       <ImageDisplay
         fileName={image.fileName}
         isProcessing={image.processing}
+        dataBlurUrl={image.blurData}
       />
       {deleting && <RemoveDeleteBtn onClick={onToggle} />}
     </motion.div>

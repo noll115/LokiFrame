@@ -11,5 +11,7 @@ CREATE TABLE `image` (
 	`file_name` text NOT NULL,
 	`lat` real,
 	`long` real,
-	`created_at` integer DEFAULT (unixepoch())
+	`created_at` integer DEFAULT (unixepoch()),
+	`processing` integer DEFAULT false NOT NULL,
+	`blur_data` text NOT NULL
 );
