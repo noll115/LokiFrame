@@ -44,7 +44,7 @@ const PhotoEditor = ({ onClose, setLoading }: Props) => {
         </div>
       </div>
       {currentIndex < images.length - 1 ? (
-        <NextPhotoBtn onNext={onNext} />
+        <BottomBtn onClick={onNext}>Next</BottomBtn>
       ) : (
         <UploadBtn
           setLoading={setLoading}
@@ -87,9 +87,6 @@ const ImageCropper = forwardRef<
   );
 });
 
-const NextPhotoBtn: FC<{ onNext: () => void }> = ({ onNext }) => (
-  <BottomBtn onClick={onNext}>Next</BottomBtn>
-);
 interface UploadProps {
   onClose: () => void;
   images: PhotoData[];
@@ -111,7 +108,7 @@ const UploadBtn = ({ onClose, images, setLoading }: UploadProps) => {
 
   return (
     <BottomBtn onClick={submitFiles}>
-      Upload <FaUpload className="text-2xl" />
+      Upload <FaUpload />
     </BottomBtn>
   );
 };
