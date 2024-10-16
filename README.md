@@ -2,7 +2,12 @@
 # Lokiframe
 
 A Next.js project for people who want to locally host a digital picture frame.
-Users can add pictures and change picture frame settings at `/` and photo show is on `/frame`.
+
+#### Add pictures and change picture frame settings at `/` 
+![web-mock](https://github.com/user-attachments/assets/8c1184b6-d34f-4a68-a370-77dd6b7f0946) 
+#### Photo display is on `/frame` 
+![frame-mock](https://github.com/user-attachments/assets/23764b5f-3af6-464c-86a8-33d69c54d9f7)
+
 
 
 ## Tech Used
