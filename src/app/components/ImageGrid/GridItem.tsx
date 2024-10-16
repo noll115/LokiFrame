@@ -1,20 +1,7 @@
-import {
-  DOMAttributes,
-  FC,
-  RefObject,
-  TouchEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import ImageDisplay from "../ImageDisplay";
 import { TbTrash } from "react-icons/tb";
-import {
-  HTMLMotionProps,
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Image } from "@/drizzle/schema";
 
 interface Props {
@@ -63,7 +50,7 @@ const DeletableImage = ({ image, onClick }: DeletableProps) => {
   };
 
   const hoverBtn = isProcessing ? null : (
-    <div className="size-full flex hover:backdrop-blur-[2px] justify-center items-center duration-300 opacity-0 group-hover:opacity-100 transition absolute top-0 left-0">
+    <div className="flex hover:backdrop-blur-[2px] justify-center items-center duration-300 opacity-0 hover:opacity-100 transition absolute inset-0">
       <button
         className="btn btn-error border-none drop-shadow-md rounded-box p-2 h-min text-3xl"
         onClick={onToggle}
@@ -134,7 +121,7 @@ const RemoveDeleteBtn = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="inset-0 flex justify-center items-center backdrop-blur-[2px] absolute ">
       <button
-        className="btn btn-ghost bg-neutral bg-opacity-30 text-error text-5xl p-2 h-min"
+        className="btn btn-ghost bg-error/60 text-error-content text-5xl p-2 h-min"
         onClick={onClick}
       >
         <TbTrash />

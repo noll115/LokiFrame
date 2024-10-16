@@ -39,8 +39,8 @@ const AddPhotoButton = ({ hasImages }: Props) => {
       >
         <MdAddAPhoto />
         {!hasImages && (
-          <div className="absolute top-full pointer-events-none min-w-max right-2 font-normal bg-primary-content">
-            <span className="text-xl">Start adding photos!</span>
+          <div className="absolute top-full pointer-events-none min-w-max right-2  ">
+            <span className="text-2xl">Start adding photos!</span>
             <MdArrowUpward className="inline-block animate-bounce" />
           </div>
         )}
