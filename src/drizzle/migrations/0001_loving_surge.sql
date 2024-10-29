@@ -1,0 +1,1 @@
+ALTER TABLE `config` ADD `brightness` integer DEFAULT 10 NOT NULL;

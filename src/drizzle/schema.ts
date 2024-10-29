@@ -19,6 +19,7 @@ export const configTable = sqliteTable("config", {
     .default(false)
     .notNull(),
   timePerPic: integer("time_per_pic").default(15000).notNull(),
+  brightness: integer().default(10).notNull(),
   configUpdateTime: integer("config_update_time")
     .default(sql`(unixepoch())`)
     .notNull(),

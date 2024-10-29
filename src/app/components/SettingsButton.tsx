@@ -9,6 +9,8 @@ export const SettingsButton = ({ initConfig }: Props) => {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [timePerPic, setTimePerPic] = useState(initConfig.timePerPic);
   const [showClock, setShowClock] = useState(initConfig.showClock);
+  const [frameBrightness, setFrameBrightness] = useState(initConfig.brightness);
+
   const submitForm = () => {
     settingsAction({ showClock, timePerPic });
   };
@@ -55,6 +57,23 @@ export const SettingsButton = ({ initConfig }: Props) => {
                   value={timePerPic}
                   onChange={({ target }) => setTimePerPic(Number(target.value))}
                   step="1000"
+                  className="range range-accent range-md"
+                />
+              </label>
+              <label className="form-control gap-2">
+                <span className="label-text">
+                  Brightness: <b>{frameBrightness}</b>
+                </span>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  name="Frame Brightness"
+                  value={frameBrightness}
+                  onChange={({ target }) =>
+                    setFrameBrightness(Number(target.value))
+                  }
+                  step="1"
                   className="range range-accent range-md"
                 />
               </label>
